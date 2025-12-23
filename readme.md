@@ -6,6 +6,8 @@
 
 I will use grabseqs to download raw reads
 
+#### 1.1. Installtion
+
 ```bash
 # install grabseqs
 conda create -n grabseqs -y
@@ -18,6 +20,7 @@ conda install grabseqs -c louiejtaylor -c bioconda -c conda-forge
 #### 1.2. Download Raw reads
 
 ```bash
+conda activate grabseqs
 # to download a sequence illumina run
 grabseqs sra -t 4 -m metadata.csv -o ./01_raw_reads/short_reads -r 4 SRR8893090
 
