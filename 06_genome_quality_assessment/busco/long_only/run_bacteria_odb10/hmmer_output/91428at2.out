@@ -1,0 +1,20 @@
+#                                                                            --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name        accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+1:1367126-1367749    -            208 91428at2             -            555   6.8e-40  136.3   0.0   1   1   5.2e-43   8.9e-40  135.9   0.0   142   250     2   128     1   145 0.86 1_3021 # 1367126 # 1367749 # 1 # ID=1_3021;partial=00;start_type=GTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.466
+1:1368172-1368570    -            133 91428at2             -            555   1.3e-19   69.4   0.2   1   1   9.5e-23   1.6e-19   69.0   0.2   357   417    12    75     5    78 0.87 1_3023 # 1368172 # 1368570 # 1 # ID=1_3023;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.481
+1:1366532-1366741    -             70 91428at2             -            555   5.2e-13   47.5   0.0   1   1   3.1e-16   5.2e-13   47.5   0.0     2    47     3    50     2    68 0.81 1_3019 # 1366532 # 1366741 # 1 # ID=1_3019;partial=00;start_type=ATG;rbs_motif=AACAA;rbs_spacer=15bp;gc_cont=0.429
+1:1367897-1368175    -             93 91428at2             -            555   3.8e-09   34.8   0.0   1   1   2.2e-12   3.8e-09   34.8   0.0   319   358    21    58     5    84 0.76 1_3022 # 1367897 # 1368175 # 1 # ID=1_3022;partial=00;start_type=TTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.398
+2:319339-319488      -             50 91428at2             -            555    0.0004   18.2   0.0   1   1   2.3e-07    0.0004   18.2   0.0   433   463     2    33     1    44 0.85 2_705 # 319339 # 319488 # 1 # ID=2_705;partial=00;start_type=ATG;rbs_motif=AAAA;rbs_spacer=10bp;gc_cont=0.407
+1:1368818-1369126    -            103 91428at2             -            555      0.02   12.6   0.2   1   1   1.1e-05      0.02   12.6   0.2   528   555    68    94    30    94 0.79 1_3025 # 1368818 # 1369126 # 1 # ID=1_3025;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.489
+1:1366860-1367129    -             90 91428at2             -            555     0.026   12.2   0.0   1   1   1.8e-05     0.032   11.9   0.0    97   136     9    65     5    76 0.78 1_3020 # 1366860 # 1367129 # 1 # ID=1_3020;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.496
+#
+# Program:         hmmsearch
+# Version:         3.1b2 (February 2015)
+# Pipeline mode:   SEARCH
+# Query file:      /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/91428at2.hmm
+# Target file:     /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/long_only/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/long_only/run_bacteria_odb10/hmmer_output/91428at2.out --cpu 1 /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/91428at2.hmm /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/long_only/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /data/wgs_assembly/hybrid_genome_assembly_guide
+# Date:            Sun Dec 28 03:07:41 2025
+# [ok]

@@ -1,0 +1,14 @@
+#                                                                            --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name        accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+5:63162-63479        -            106 1949059at2           -            105   2.3e-33  112.6   3.5   1   1   5.6e-37   2.5e-33  112.5   3.5     1    99     1   104     1   105 0.94 5_51 # 63162 # 63479 # -1 # ID=5_51;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.406
+#
+# Program:         hmmsearch
+# Version:         3.1b2 (February 2015)
+# Pipeline mode:   SEARCH
+# Query file:      /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/1949059at2.hmm
+# Target file:     /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/short_only/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/short_only/run_bacteria_odb10/hmmer_output/1949059at2.out --cpu 1 /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/1949059at2.hmm /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/short_only/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /data/wgs_assembly/hybrid_genome_assembly_guide
+# Date:            Sun Dec 28 03:07:12 2025
+# [ok]

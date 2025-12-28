@@ -1,0 +1,5 @@
+#FILE	NUM_FOUND	CfiA28	ErmF	cfiA13_1	cfiA28	erm(F)	erm(F)_3	nimE	nimE_1	tet(Q)	tet(Q)_1
+/data/wgs_assembly/hybrid_genome_assembly_guide/09_abricate/assembly_level/abricate_card_assembly.tsv	4	100.00	100.00	.	.	.	.	100.00	.	99.95;100.00	.
+/data/wgs_assembly/hybrid_genome_assembly_guide/09_abricate/assembly_level/abricate_ncbi_assembly.tsv	4	.	.	.	100.00	100.00	.	100.00	.	100.00;100.00	.
+/data/wgs_assembly/hybrid_genome_assembly_guide/09_abricate/assembly_level/abricate_resfinder_assembly.tsv	4	.	.	100.00	.	.	100.00	.	100.00	.	100.00;100.00
+/data/wgs_assembly/hybrid_genome_assembly_guide/09_abricate/assembly_level/abricate_vfdb_assembly.tsv	0	.	.	.	.	.	.	.	.	.	.

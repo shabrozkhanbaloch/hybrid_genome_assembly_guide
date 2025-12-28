@@ -1,0 +1,15 @@
+#                                                                            --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name        accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+10:75686-76132       -            149 1874945at2           -             87   9.5e-22   74.8   8.6   1   2   9.3e-23   4.2e-19   66.3   3.3     1    54     1    63     1    95 0.86 10_80 # 75686 # 76132 # 1 # ID=10_80;partial=00;start_type=ATG;rbs_motif=TAAA;rbs_spacer=12bp;gc_cont=0.380
+10:75686-76132       -            149 1874945at2           -             87   9.5e-22   74.8   8.6   2   2   1.2e-05     0.055   11.5   0.2    59    87   110   145   106   145 0.70 10_80 # 75686 # 76132 # 1 # ID=10_80;partial=00;start_type=ATG;rbs_motif=TAAA;rbs_spacer=12bp;gc_cont=0.380
+#
+# Program:         hmmsearch
+# Version:         3.1b2 (February 2015)
+# Pipeline mode:   SEARCH
+# Query file:      /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/1874945at2.hmm
+# Target file:     /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/short_only/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/short_only/run_bacteria_odb10/hmmer_output/1874945at2.out --cpu 1 /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/1874945at2.hmm /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/short_only/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /data/wgs_assembly/hybrid_genome_assembly_guide
+# Date:            Sun Dec 28 03:07:12 2025
+# [ok]

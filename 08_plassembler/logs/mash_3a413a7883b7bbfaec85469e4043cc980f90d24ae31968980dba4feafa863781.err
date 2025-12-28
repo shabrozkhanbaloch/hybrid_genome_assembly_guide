@@ -1,0 +1,1 @@
+Command line: mash dist /data/wgs_assembly/hybrid_genome_assembly_guide/08_plassembler/plasmids.fasta.msh /data/databases_important/plassembler_db/plsdb_2023_11_03_v2.msh -v 0.1 -d 0.1 -i

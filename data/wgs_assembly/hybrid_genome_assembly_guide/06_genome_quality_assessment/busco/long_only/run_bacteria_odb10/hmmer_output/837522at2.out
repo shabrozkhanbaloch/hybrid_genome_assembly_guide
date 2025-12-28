@@ -1,0 +1,22 @@
+#                                                                            --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name        accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+3:200574-201293      -            240 837522at2            -            420  3.4e-105  351.7   4.0   1   2   1.2e-67   1.9e-64  217.5   0.4   145   272     7   144     2   151 0.94 3_464 # 200574 # 201293 # 1 # ID=3_464;partial=00;start_type=GTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.460
+3:200574-201293      -            240 837522at2            -            420  3.4e-105  351.7   4.0   2   2   8.6e-43   1.3e-39  135.7   0.3   268   343   161   236   157   239 0.94 3_464 # 200574 # 201293 # 1 # ID=3_464;partial=00;start_type=GTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.460
+3:200061-200477      -            139 837522at2            -            420     2e-28   98.8   0.5   1   1   1.6e-31   2.4e-28   98.5   0.5     8    98    25   123    18   136 0.90 3_463 # 200061 # 200477 # 1 # ID=3_463;partial=00;start_type=ATG;rbs_motif=AAAA;rbs_spacer=3bp;gc_cont=0.477
+2:451420-452322      -            301 837522at2            -            420   1.2e-12   46.8   0.0   1   1   9.9e-16   1.5e-12   46.5   0.0    32   268    29   282     3   285 0.82 2_974 # 451420 # 452322 # -1 # ID=2_974;partial=00;start_type=ATG;rbs_motif=AATAA;rbs_spacer=4bp;gc_cont=0.471
+2:452842-453342      -            167 837522at2            -            420   1.2e-11   43.5   0.0   1   1   8.5e-15   1.3e-11   43.4   0.0   181   287    29   141     1   150 0.79 2_976 # 452842 # 453342 # -1 # ID=2_976;partial=00;start_type=GTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.487
+3:195501-195692      -             64 837522at2            -            420   4.4e-05   21.9   0.0   1   1   3.4e-08     5e-05   21.7   0.0    58   106     6    54     5    61 0.88 3_452 # 195501 # 195692 # 1 # ID=3_452;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.453
+2:806709-807392      -            228 837522at2            -            420   6.4e-05   21.4   0.0   1   1   5.8e-08   8.7e-05   20.9   0.0   121   179   140   203   135   211 0.72 2_1755 # 806709 # 807392 # 1 # ID=2_1755;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.496
+3:201344-201568      -             75 837522at2            -            420   0.00017   20.0   0.0   1   1   1.3e-07   0.00019   19.8   0.0   370   416     8    59     2    63 0.79 3_465 # 201344 # 201568 # 1 # ID=3_465;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.444
+3:195707-196000      -             98 837522at2            -            420      0.03   12.6   0.0   1   1   2.1e-05     0.031   12.5   0.0   116   187     2    77     1    88 0.82 3_453 # 195707 # 196000 # 1 # ID=3_453;partial=00;start_type=GTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.408
+#
+# Program:         hmmsearch
+# Version:         3.1b2 (February 2015)
+# Pipeline mode:   SEARCH
+# Query file:      /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/837522at2.hmm
+# Target file:     data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/long_only/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/long_only/run_bacteria_odb10/hmmer_output/837522at2.out --cpu 1 /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/837522at2.hmm data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/long_only/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /data/wgs_assembly/hybrid_genome_assembly_guide
+# Date:            Sun Dec 28 03:00:33 2025
+# [ok]

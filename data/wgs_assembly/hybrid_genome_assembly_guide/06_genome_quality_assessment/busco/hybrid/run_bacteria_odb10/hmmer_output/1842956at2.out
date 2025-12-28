@@ -1,0 +1,15 @@
+#                                                                            --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name        accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+3:46023-46778        -            252 1842956at2           -             97   7.6e-12   43.4   2.3   1   2   1.2e-13   5.4e-10   37.4   1.1     7    72    38   124    34   146 0.73 3_33 # 46023 # 46778 # -1 # ID=3_33;partial=00;start_type=ATG;rbs_motif=TAAAAA;rbs_spacer=14bp;gc_cont=0.402
+3:46023-46778        -            252 1842956at2           -             97   7.6e-12   43.4   2.3   2   2      0.24   1.1e+03   -2.0   0.0    79    95   222   238   214   240 0.77 3_33 # 46023 # 46778 # -1 # ID=3_33;partial=00;start_type=ATG;rbs_motif=TAAAAA;rbs_spacer=14bp;gc_cont=0.402
+#
+# Program:         hmmsearch
+# Version:         3.1b2 (February 2015)
+# Pipeline mode:   SEARCH
+# Query file:      /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/1842956at2.hmm
+# Target file:     data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/hybrid/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/hybrid/run_bacteria_odb10/hmmer_output/1842956at2.out --cpu 1 /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/1842956at2.hmm data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/hybrid/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /data/wgs_assembly/hybrid_genome_assembly_guide
+# Date:            Sun Dec 28 03:00:47 2025
+# [ok]

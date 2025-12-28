@@ -1,0 +1,1 @@
+Command line: samtools view -h -@ 10 -b /data/wgs_assembly/hybrid_genome_assembly_guide/08_plassembler/short_read.sam

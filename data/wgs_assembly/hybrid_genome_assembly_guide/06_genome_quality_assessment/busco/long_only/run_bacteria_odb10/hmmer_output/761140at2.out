@@ -1,0 +1,17 @@
+#                                                                            --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name        accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+1:2349144-2349884    -            247 761140at2            -            323   8.7e-22   77.3   1.8   1   2    0.0022         9    5.0   0.1    89   114    13    40     4    59 0.74 1_5129 # 2349144 # 2349884 # -1 # ID=1_5129;partial=00;start_type=TTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.484
+1:2349144-2349884    -            247 761140at2            -            323   8.7e-22   77.3   1.8   2   2   2.5e-23   9.9e-20   70.6   0.2   119   213    94   224    90   239 0.79 1_5129 # 2349144 # 2349884 # -1 # ID=1_5129;partial=00;start_type=TTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.484
+1:2244558-2245154    -            199 761140at2            -            323   1.5e-06   27.3   0.0   1   1   6.5e-10   2.6e-06   26.5   0.0     1    55    31    91    31   115 0.82 1_4917 # 2244558 # 2245154 # -1 # ID=1_4917;partial=00;start_type=ATG;rbs_motif=AAAA;rbs_spacer=10bp;gc_cont=0.407
+1:2348857-2349204    -            116 761140at2            -            323    0.0084   15.0   0.1   1   1     3e-06     0.012   14.5   0.1   212   263    12    74    11   106 0.76 1_5128 # 2348857 # 2349204 # -1 # ID=1_5128;partial=00;start_type=GTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.457
+#
+# Program:         hmmsearch
+# Version:         3.1b2 (February 2015)
+# Pipeline mode:   SEARCH
+# Query file:      /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/761140at2.hmm
+# Target file:     data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/long_only/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/long_only/run_bacteria_odb10/hmmer_output/761140at2.out --cpu 1 /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/761140at2.hmm data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/long_only/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /data/wgs_assembly/hybrid_genome_assembly_guide
+# Date:            Sun Dec 28 03:00:33 2025
+# [ok]

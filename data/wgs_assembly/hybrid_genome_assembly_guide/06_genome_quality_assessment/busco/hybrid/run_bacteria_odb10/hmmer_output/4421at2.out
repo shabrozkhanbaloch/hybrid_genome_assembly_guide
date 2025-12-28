@@ -1,0 +1,15 @@
+#                                                                            --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name        accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+1:4068161-4072444    -           1428 4421at2              -           1179         0 1691.1  20.3   1   2         0         0 1593.3  13.8     4  1112    10  1287     7  1293 0.87 1_3455 # 4068161 # 4072444 # -1 # ID=1_3455;partial=00;start_type=ATG;rbs_motif=TAA;rbs_spacer=4bp;gc_cont=0.444
+1:4068161-4072444    -           1428 4421at2              -           1179         0 1691.1  20.3   2   2   3.9e-32   1.8e-28   96.9   0.5  1081  1178  1288  1397  1285  1398 0.80 1_3455 # 4068161 # 4072444 # -1 # ID=1_3455;partial=00;start_type=ATG;rbs_motif=TAA;rbs_spacer=4bp;gc_cont=0.444
+#
+# Program:         hmmsearch
+# Version:         3.1b2 (February 2015)
+# Pipeline mode:   SEARCH
+# Query file:      /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/4421at2.hmm
+# Target file:     data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/hybrid/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/hybrid/run_bacteria_odb10/hmmer_output/4421at2.out --cpu 1 /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/4421at2.hmm data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/hybrid/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /data/wgs_assembly/hybrid_genome_assembly_guide
+# Date:            Sun Dec 28 03:00:48 2025
+# [ok]

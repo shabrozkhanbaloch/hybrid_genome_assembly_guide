@@ -1,0 +1,18 @@
+#                                                                            --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name        accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+5:245981-247024      -            348 1080436at2           -            270  1.1e-118  393.6   1.7   1   1  1.4e-121  1.6e-118  393.2   1.7     2   262    23   325    22   332 0.91 5_202 # 245981 # 247024 # -1 # ID=5_202;partial=00;start_type=ATG;rbs_motif=TAAA;rbs_spacer=9bp;gc_cont=0.431
+3:398886-400250      -            455 1080436at2           -            270    0.0038   14.8   0.4   1   2   1.9e-05     0.022   12.3   0.1     5    84   160   235   156   253 0.74 3_363 # 398886 # 400250 # 1 # ID=3_363;partial=00;start_type=ATG;rbs_motif=AAA;rbs_spacer=4bp;gc_cont=0.563
+3:398886-400250      -            455 1080436at2           -            270    0.0038   14.8   0.4   2   2     0.092     1e+02    0.2   0.0   110   169   299   358   284   365 0.79 3_363 # 398886 # 400250 # 1 # ID=3_363;partial=00;start_type=ATG;rbs_motif=AAA;rbs_spacer=4bp;gc_cont=0.563
+19:44817-46184       -            456 1080436at2           -            270     0.013   13.0   0.0   1   1   2.1e-05     0.023   12.2   0.0    29   132    75   178    68   217 0.81 19_30 # 44817 # 46184 # 1 # ID=19_30;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.534
+2:246392-247279      -            296 1080436at2           -            270     0.014   13.0   0.0   1   1   1.9e-05     0.022   12.3   0.0    42    93    27    81    13    91 0.82 2_216 # 246392 # 247279 # -1 # ID=2_216;partial=00;start_type=ATG;rbs_motif=AAAAA;rbs_spacer=13bp;gc_cont=0.421
+#
+# Program:         hmmsearch
+# Version:         3.1b2 (February 2015)
+# Pipeline mode:   SEARCH
+# Query file:      /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/1080436at2.hmm
+# Target file:     /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/short_only/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/short_only/run_bacteria_odb10/hmmer_output/1080436at2.out --cpu 1 /data/wgs_assembly/hybrid_genome_assembly_guide/busco_downloads/lineages/bacteria_odb10/hmms/1080436at2.hmm /data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco/short_only/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /data/wgs_assembly/hybrid_genome_assembly_guide
+# Date:            Sun Dec 28 03:07:12 2025
+# [ok]
