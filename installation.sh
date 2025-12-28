@@ -4,8 +4,8 @@ echo "Setting up conda environments for short read quality control and multiqc"
 eval "$(conda shell.bash hook)"
 
 # remove previous conda environment if exists
-conda env remove -n 01_short_read_qc -y
-conda env remove -n 02_multiqc -y
+# conda env remove -n 01_short_read_qc -y
+# conda env remove -n 02_multiqc -y
 
 # 01_fastqc and fastp
 conda create -n 01_short_read_qc -y
@@ -62,9 +62,9 @@ checkm2 -h
 #manuall database download
 # mkdir -p /home/codanics/databases_important/checkm2_db
 wget https://zenodo.org/api/records/14897628/files/checkm2_database.tar.gz/content \
-    -O /home/codanics/databases_important/checkm2_db/checkm2_database.tar.gz
-tar -xzvf /home/codanics/databases_important/checkm2_db/checkm2_database.tar.gz -C /home/codanics/databases_important/checkm2_db/
-export CHECKM2DB="/home/codanics/databases_important/checkm2_db/CheckM2_database/uniref100.KO.1.dmnd"
+    -O /data/databases_important/checkm2_db/checkm2_database.tar.gz
+tar -xzvf /data/databases_important/checkm2_db/checkm2_database.tar.gz -C /data/databases_important/checkm2_db/
+export CHECKM2DB="/data/databases_important/checkm2_db/CheckM2_database/uniref100.KO.1.dmnd"
 # test run
 checkm2 testrun
 
@@ -121,13 +121,12 @@ echo "--------------------------------------------"
 ## manual way will end with 4GB
 mkdir -p /home/codanics/databases_important/bakta_db
 wget https://zenodo.org/records/14916843/files/db-light.tar.xz \
-    -O /home/codanics/databases_important/bakta_db_light.tar.xz
-tar -xJvf /home/codanics/databases_important/bakta_db_light.tar.xz \
-    -C /home/codanics/databases_important/bakta_db
-rm /home/codanics/databases_important/bakta_db_light.tar.xz
+    -O /data/databases_important/bakta_db-light.tar.xz
+tar -xJvf /data/databases_important/bakta_db-light.tar.xz \
+    -C /data/databases_important/bakta_db
+rm /data/databases_important/bakta_db-light.tar.xz
 # set BAKTA_DB_PATH environment variable
-export BAKTA_DB="/home/codanics/databases_important/bakta_db/db-light"
+export BAKTA_DB="/data/databases_important/bakta_db/db-light"
 # update amrfinderplus database if needed
-amrfinder_update --force_update --database /home/codanics/databases_important/bakta_db/db-light/amrfinderplus-db
-
+amrfinder_update --force_update --database /data/databases_important/bakta_db/db-light/amrfinderplus-db
 plassembler.py download_databases --db_path data/databases_important/plassembler_db
