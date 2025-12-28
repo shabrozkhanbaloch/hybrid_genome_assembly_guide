@@ -73,8 +73,7 @@ echo "--------------------------------------------"
 echo "Setting up conda environment for genome quality assessment using QUAST"
 conda env remove -n 04b_quast -y
 conda create -n 04b_quast -c bioconda quast -y
-#update quast to latest version
-pip install quast==5.2
+# activate environment
 conda activate 04b_quast
 # check installation
 quast --version
@@ -117,9 +116,9 @@ prokka --listdb
 bakta --version
 echo "--------------------------------------------"
 ## bakta databse download
-# bakta_db download --output /home/codanics/databases_important/bakta_db --type light
+# bakta_db download --output /data/databases_important/bakta_db --type light
 ## manual way will end with 4GB
-mkdir -p /home/codanics/databases_important/bakta_db
+mkdir -p /data/databases_important/bakta_db
 wget https://zenodo.org/records/14916843/files/db-light.tar.xz \
     -O /data/databases_important/bakta_db-light.tar.xz
 tar -xJvf /data/databases_important/bakta_db-light.tar.xz \
@@ -129,4 +128,31 @@ rm /data/databases_important/bakta_db-light.tar.xz
 export BAKTA_DB="/data/databases_important/bakta_db/db-light"
 # update amrfinderplus database if needed
 amrfinder_update --force_update --database /data/databases_important/bakta_db/db-light/amrfinderplus-db
-plassembler.py download_databases --db_path data/databases_important/plassembler_db
+plassembler download --database /data/databases_important/plassembler_db --force
+
+#################################
+# 06 Plassembler
+#################################
+conda create -n 06_plassembler -c bioconda plassembler -y
+conda activate 06_plassembler
+
+mkdir -p $BASE_DB/plassembler_db
+plassembler download --database $BASE_DB/plassembler_db --force
+
+#################################
+# 07 Abricate
+#################################
+conda create -n 07_abricate -c bioconda abricate -y
+conda activate 07_abricate
+abricate --setupdb
+
+#################################
+# 08 geNomad
+#################################
+conda create -n 08_genomad -c bioconda genomad -y
+conda activate 08_genomad
+genomad download-database $BASE_DB/genomad_db
+
+#################################
+echo "All environments and databases installed successfully."
+echo "Hybrid genome assembly pipeline is ready to run."
