@@ -209,22 +209,24 @@ The pipeline stops immediately if any step fails.
 ---
 
 
-## Software and Tools
+## Software Installation
 
-| Step | Tool |
-|-----|------|
-| Short-read QC | FastQC, fastp |
-| Long-read QC | NanoPlot, NanoFilt |
-| Genome assembly | Unicycler |
-| Assembly quality | CheckM2, QUAST, BUSCO |
-| Genome annotation | Prokka, Bakta |
-| Plasmid reconstruction | Plassembler |
-| AMR detection | Abricate |
-| Viral / prophage detection | geNomad |
+All tools are installed via Conda using the provided `installation.sh` script.
+The pipeline has been tested on Linux systems.
 
-Each step runs in an isolated **Conda environment** to ensure reproducibility.
+The following Conda environments are created:
 
----
+- Short-read QC: FastQC, fastp
+- Long-read QC: NanoPlot, NanoFilt, Filtlong
+- Assembly: Unicycler
+- Genome quality assessment: CheckM2, QUAST, BUSCO
+- Genome annotation: Prokka, Bakta
+- Plasmid reconstruction: Plassembler
+- AMR & virulence profiling: Abricate
+- Prophage and mobile element detection: geNomad
+
+All required reference databases (CheckM2, BUSCO, Bakta, Plassembler, geNomad) are downloaded automatically.
+
 ---
 
 ## Acknowledgements
