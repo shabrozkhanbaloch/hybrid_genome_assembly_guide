@@ -27,7 +27,7 @@ fastp \
   -o "$PROC_SHORT"/processed_1.fastq.gz \
   -O "$PROC_SHORT"/processed_2.fastq.gz \
   -q 25 \
-  -w 12 \
+  -w 14 \
   -h "$QC_SHORT"/fastp_report.html \
   -j "$QC_SHORT"/fastp_report.json
 
@@ -37,7 +37,7 @@ fastp \
 conda activate 03b_long_read_nanofilt
 
 zcat "$RAW_LONG"/*.fastq.gz | \
-  NanoFilt -q 8 --length 1000 | \
+  NanoFilt -q 8 --length 1000 --headcrop 50 | \
   gzip > "$PROC_LONG"/processed_long.fastq.gz
 
 ############################
@@ -48,7 +48,7 @@ conda activate 03a_long_read_nanoplot
 NanoPlot \
   --fastq "$PROC_LONG"/processed_long.fastq.gz \
   --outdir "$QC_LONG" \
-  --threads 12
+  --threads 14
 
 echo "Read processing (short + long) complete."
 echo "Processed reads saved in:"
