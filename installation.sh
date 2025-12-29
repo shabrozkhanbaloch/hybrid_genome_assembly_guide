@@ -57,10 +57,10 @@ conda activate 04a_checkm2
 checkm2 -h
 # download databases if the commands work use following
 # checkm2 database --download
-# checkm2 database --download --path /home/codanics/databases_important/checkm2_db
+# checkm2 database --download --path /data/databases_important/checkm2_db
 
 #manuall database download
-# mkdir -p /home/codanics/databases_important/checkm2_db
+# mkdir -p /data/databases_important/checkm2_db
 wget https://zenodo.org/api/records/14897628/files/checkm2_database.tar.gz/content \
     -O /data/databases_important/checkm2_db/checkm2_database.tar.gz
 tar -xzvf /data/databases_important/checkm2_db/checkm2_database.tar.gz -C /data/databases_important/checkm2_db/

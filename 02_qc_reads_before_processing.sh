@@ -19,7 +19,7 @@ mkdir -p "$QC_SHORT" "$QC_LONG"
 conda activate 01_short_read_qc
 
 fastqc \
-  -t 12 \
+  -t 14 \
   --extract \
   --svg \
   -o "$QC_SHORT" \
@@ -33,7 +33,7 @@ conda activate 03a_long_read_nanoplot
 NanoPlot \
   --fastq "$RAW_LONG"/*.fastq.gz \
   --outdir "$QC_LONG" \
-  --threads 12
+  --threads 14
 
 ############################
 # MultiQC (short reads only)
