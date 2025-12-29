@@ -103,6 +103,24 @@ busco --list-datasets
 # busco --download bacteria_odb12 
 # downloaded datasets will be stored in conda env path under /busco_downloads/
 echo "--------------------------------------------"
+############################################
+# Genome QC plotting (CheckM2 + BUSCO + QUAST)
+############################################
+
+echo "Setting up conda environment for genome quality plotting (Plotly)"
+
+
+# create environment
+conda create -n 05a_qc_plot python=3.10 -y
+conda activate 05a_qc_plot
+
+# core scientific stack
+conda install -c conda-forge pandas numpy -y
+
+# plotly for interactive dashboards
+conda install -c conda-forge plotly -y
+
+
 
 # genome annotation
 echo "Setting up conda environment for genome annotation using Prokka and Bakta"
