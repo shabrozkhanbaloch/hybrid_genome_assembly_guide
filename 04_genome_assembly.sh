@@ -23,7 +23,7 @@ unicycler \
   -1 "$SHORT_PROC"/processed_1.fastq.gz \
   -2 "$SHORT_PROC"/processed_2.fastq.gz \
   -o "$ASM_OUT/01_short_only" \
-  -t 12
+  -t 14
 
 ############################
 # Long-read only assembly
@@ -31,7 +31,7 @@ unicycler \
 unicycler \
   -l "$LONG_PROC"/processed_long.fastq.gz \
   -o "$ASM_OUT/02_long_only" \
-  -t 12
+  -t 14
 
 ############################
 # Hybrid assembly
