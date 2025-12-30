@@ -7,3 +7,23 @@
 # ignore intermediate files
 *.tmp
 *.log
+# ===== Genome quality large outputs =====
+06_genome_quality_assessment/coverage/
+06_genome_quality_assessment/dotplots/
+06_genome_quality_assessment/gc_bias/
+06_genome_quality_assessment/plasmid_copy_number/
+
+# Depth / coverage files
+*.depth
+*.depth.txt
+*.bam
+*.bai
+*.paf
+
+# Large HTML dashboards
+*.html
+
+# Plotly cache / JS bundles
+np
+go
+pd
