@@ -45,7 +45,7 @@ conda install bioconda::filtlong -y
 conda create -n 04_unicycler -y
 conda activate 04_unicycler
 conda install bioconda::unicycler -y
-
+conda install -c bioconda minimap2 samtools -y
 
 
 # install checkm2 for genome quality assessment
@@ -131,6 +131,37 @@ conda install -c bioconda minimap2 -y
 
 
 conda activate dotplot
+
+##############################
+# GC bias analysis
+echo "Setting up conda environment for GC bias analysis"
+conda create -n 05c_gc_bias \
+  -c bioconda -c conda-forge \
+  python=3.10 \
+  minimap2 \
+  samtools \
+  biopython \
+  pandas \
+  plotly \
+  -y
+
+
+
+conda activate 05c_gc_bias
+
+conda activate 04_unicycler
+
+minimap2 -ax map-ont \
+  05_genome_assembly/03_hybrid/assembly.fasta \
+  08_plassembler/plassembler_plasmids.fasta \
+| samtools sort -o 06_genome_quality_assessment/coverage/plasmid_vs_hybrid.bam
+
+samtools depth \
+  06_genome_quality_assessment/coverage/plasmid_vs_hybrid.bam \
+> 06_genome_quality_assessment/coverage/plasmid_vs_hybrid.depth
+
+
+
 
 
 

@@ -1,0 +1,54 @@
+#!/bin/bash
+set -euo pipefail
+
+eval "$(conda shell.bash hook)"
+conda activate 04_unicycler   # has minimap2 + samtools
+
+BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
+
+SHORT_ASM="$BASE/05_genome_assembly/01_short_only/assembly.fasta"
+HYBRID_ASM="$BASE/05_genome_assembly/03_hybrid/assembly.fasta"
+
+SR1="$BASE/03_processed_reads/short_reads/processed_1.fastq.gz"
+SR2="$BASE/03_processed_reads/short_reads/processed_2.fastq.gz"
+LR="$BASE/03_processed_reads/long_reads/processed_long.fastq.gz"
+
+OUT="$BASE/06_genome_quality_assessment/coverage"
+
+mkdir -p \
+  "$OUT/short_reads/short_vs_short" \
+  "$OUT/short_reads/short_vs_hybrid" \
+  "$OUT/long_reads/long_vs_hybrid"
+
+############################
+# 1. Short reads → Short-only
+############################
+minimap2 -ax sr "$SHORT_ASM" "$SR1" "$SR2" | \
+  samtools sort -o "$OUT/short_reads/short_vs_short/aln.bam"
+samtools index "$OUT/short_reads/short_vs_short/aln.bam"
+
+samtools depth "$OUT/short_reads/short_vs_short/aln.bam" > \
+  "$OUT/short_reads/short_vs_short/depth.txt"
+
+############################
+# 2. Short reads → Hybrid
+############################
+minimap2 -ax sr "$HYBRID_ASM" "$SR1" "$SR2" | \
+  samtools sort -o "$OUT/short_reads/short_vs_hybrid/aln.bam"
+samtools index "$OUT/short_reads/short_vs_hybrid/aln.bam"
+
+samtools depth "$OUT/short_reads/short_vs_hybrid/aln.bam" > \
+  "$OUT/short_reads/short_vs_hybrid/depth.txt"
+
+############################
+# 3. Long reads → Hybrid
+############################
+minimap2 -ax map-ont "$HYBRID_ASM" "$LR" | \
+  samtools sort -o "$OUT/long_reads/long_vs_hybrid/aln.bam"
+samtools index "$OUT/long_reads/long_vs_hybrid/aln.bam"
+
+samtools depth "$OUT/long_reads/long_vs_hybrid/aln.bam" > \
+  "$OUT/long_reads/long_vs_hybrid/depth.txt"
+
+echo "Coverage analysis complete."
+echo "Results saved in: $OUT"
