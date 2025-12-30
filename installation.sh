@@ -121,6 +121,19 @@ conda install -c conda-forge pandas numpy -y
 conda install -c conda-forge plotly -y
 
 
+#################################
+# Dotplot (MUMmer)
+
+conda create -n dotplot -c bioconda mummer -y
+conda activate 05b_dotplot
+conda install -y python=3.10 pandas plotly numpy
+conda install -c bioconda minimap2 -y
+
+
+conda activate dotplot
+
+
+
 
 # genome annotation
 echo "Setting up conda environment for genome annotation using Prokka and Bakta"
