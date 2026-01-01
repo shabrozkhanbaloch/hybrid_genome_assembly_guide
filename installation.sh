@@ -216,5 +216,23 @@ conda activate 08_genomad
 genomad download-database $BASE_DB/genomad_db
 
 #################################
+
+# create ploting environment
+echo "--------------------------------------------"
+echo "Setting up conda environment for plotting assembly statistics"
+
+conda create -n 09_plots -y \
+  -c conda-forge \
+  -c bioconda \
+  python=3.10 \
+  matplotlib \
+  pandas \
+  numpy \
+  seaborn \
+  biopython
+conda activate 09_plots
+
+
+
 echo "All environments and databases installed successfully."
 echo "Hybrid genome assembly pipeline is ready to run."
