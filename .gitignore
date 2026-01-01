@@ -1,63 +1,37 @@
-############################################
-# RAW & PROCESSED SEQUENCING DATA
-############################################
+# ===== RAW & PROCESSED DATA =====
 *.fastq
 *.fastq.gz
-*.fq
-*.fq.gz
 
-############################################
-# ALIGNMENT & MAPPING FILES
-############################################
+# ===== ASSEMBLY OUTPUTS =====
+*.fasta
+*.gfa
+
+# ===== QC & ANALYSIS OUTPUTS =====
+02_qc_before_processing/
+04_qc_after_processing/
+06_genome_quality_assessment/
+07_genome_annotation/
+08_plassembler/
+09_abricate/
+10_genomad/
+
+# ===== ALIGNMENT / COVERAGE =====
 *.bam
 *.bai
-*.sam
+*.depth*
 *.paf
 
-############################################
-# COVERAGE / DEPTH FILES (VERY LARGE)
-############################################
-*.depth
-*.depth.txt
-
-############################################
-# GENOME QUALITY ASSESSMENT – LARGE OUTPUTS
-############################################
-06_genome_quality_assessment/coverage/
-06_genome_quality_assessment/dotplots/
-06_genome_quality_assessment/gc_bias/
-06_genome_quality_assessment/plasmid_copy_number/
-
-############################################
-# PLOTS & DASHBOARDS (REGENERATABLE)
-############################################
+# ===== REPORTS =====
 *.html
+fastp.json
+fastp.html
 
-############################################
-# TEMP / LOG FILES
-############################################
-*.tmp
-*.log
-.Rhistory
-
-############################################
-# PLOTLY / PYTHON LARGE ARTIFACTS
-# (auto-generated JS / binary bundles)
-############################################
+# ===== Plotly bundles =====
 np
 go
 pd
 
-############################################
-# OS / EDITOR NOISE
-############################################
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-
-############################################
-# CONDA / ENV NOISE (SAFETY)
-############################################
-__pycache__/
-*.pyc
+# Tool logs
+*.log
+unicycler.log
+busco_*.log
