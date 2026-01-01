@@ -1,1 +1,0 @@
-Command line: samtools view -b -h -@ 10 -L /data/wgs_assembly/hybrid_genome_assembly_guide/08_plassembler/non_chromosome.bed /data/wgs_assembly/hybrid_genome_assembly_guide/08_plassembler/short_read.bam

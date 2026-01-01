@@ -1,6 +1,0 @@
-#FILE	SEQUENCE	START	END	STRAND	GENE	COVERAGE	COVERAGE_MAP	GAPS	%COVERAGE	%IDENTITY	DATABASE	ACCESSION	PRODUCT	RESISTANCE
-/data/wgs_assembly/hybrid_genome_assembly_guide/08_plassembler/plassembler_plasmids.fasta	1	3228424	3229173	+	cfiA28	1-750/750	===============	0/0	100.00	99.20	ncbi	NG_071229.1	subclass B1 metallo-beta-lactamase CfiA28	CARBAPENEM
-/data/wgs_assembly/hybrid_genome_assembly_guide/08_plassembler/plassembler_plasmids.fasta	1	4324784	4325584	+	erm(F)	1-801/801	===============	0/0	100.00	99.50	ncbi	NG_047825.1	23S rRNA (adenine(2058)-N(6))-methyltransferase Erm(F)	CLINDAMYCIN;MACROLIDE;STREPTOGRAMIN
-/data/wgs_assembly/hybrid_genome_assembly_guide/08_plassembler/plassembler_plasmids.fasta	1	4325871	4327796	+	tet(Q)	1-1926/1926	===============	0/0	100.00	90.45	ncbi	NG_048270.1	tetracycline resistance ribosomal protection protein Tet(Q)	TETRACYCLINE
-/data/wgs_assembly/hybrid_genome_assembly_guide/08_plassembler/plassembler_plasmids.fasta	1	5069767	5071692	-	tet(Q)	1-1926/1926	===============	0/0	100.00	99.84	ncbi	NG_048270.1	tetracycline resistance ribosomal protection protein Tet(Q)	TETRACYCLINE
-/data/wgs_assembly/hybrid_genome_assembly_guide/08_plassembler/plassembler_plasmids.fasta	5	4327	4839	+	nimE	1-513/513	===============	0/0	100.00	100.00	ncbi	NG_048015.1	5-nitroimidazole reductase NimE	NITROIMIDAZOLE
