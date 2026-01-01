@@ -199,6 +199,25 @@ The pipeline stops immediately if any step fails.
 | Viral/prophage results | `10_genomad/*/summary` |
 
 ---
+## Version Control & Reproducibility
+
+This repository follows best practices for reproducible bioinformatics pipelines.
+
+- **Raw data, intermediate files, and large result files are NOT tracked in Git**
+- Only:
+  - scripts
+  - directory structure
+  - lightweight summary files
+are committed.
+
+All heavy outputs (assemblies, BAMs, depth files, plots, HTML dashboards)
+are generated locally after running the pipeline.
+
+This ensures:
+- GitHub size limits are respected
+- Clean version history
+- Fully reproducible analyses
+
 
 ## Intended Use
 
