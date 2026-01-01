@@ -218,6 +218,18 @@ This ensures:
 - Clean version history
 - Fully reproducible analyses
 
+## Performance Notes
+
+Tested on:
+- Lenovo ThinkPad T15g Gen 2
+- 16 CPU threads
+- 128 GB RAM
+
+Typical runtime (bacterial genome):
+- ~1–1.5 hours end-to-end
+(depending on read depth and long-read size)
+
+
 
 ## Intended Use
 
