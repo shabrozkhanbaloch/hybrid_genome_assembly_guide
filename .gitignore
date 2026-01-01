@@ -1,29 +1,63 @@
-# ignore fastq files
+############################################
+# RAW & PROCESSED SEQUENCING DATA
+############################################
 *.fastq
 *.fastq.gz
-# ignore bam files
+*.fq
+*.fq.gz
+
+############################################
+# ALIGNMENT & MAPPING FILES
+############################################
 *.bam
 *.bai
-# ignore intermediate files
-*.tmp
-*.log
-# ===== Genome quality large outputs =====
+*.sam
+*.paf
+
+############################################
+# COVERAGE / DEPTH FILES (VERY LARGE)
+############################################
+*.depth
+*.depth.txt
+
+############################################
+# GENOME QUALITY ASSESSMENT – LARGE OUTPUTS
+############################################
 06_genome_quality_assessment/coverage/
 06_genome_quality_assessment/dotplots/
 06_genome_quality_assessment/gc_bias/
 06_genome_quality_assessment/plasmid_copy_number/
 
-# Depth / coverage files
-*.depth
-*.depth.txt
-*.bam
-*.bai
-*.paf
-
-# Large HTML dashboards
+############################################
+# PLOTS & DASHBOARDS (REGENERATABLE)
+############################################
 *.html
 
-# Plotly cache / JS bundles
+############################################
+# TEMP / LOG FILES
+############################################
+*.tmp
+*.log
+.Rhistory
+
+############################################
+# PLOTLY / PYTHON LARGE ARTIFACTS
+# (auto-generated JS / binary bundles)
+############################################
 np
 go
 pd
+
+############################################
+# OS / EDITOR NOISE
+############################################
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+############################################
+# CONDA / ENV NOISE (SAFETY)
+############################################
+__pycache__/
+*.pyc
