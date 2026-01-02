@@ -2,70 +2,48 @@
 set -euo pipefail
 
 BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
+PLOT_DIR="$BASE/11_plots"
+SCRIPT_DIR="$PLOT_DIR/scripts"
+FIG_DIR="$PLOT_DIR/figures"
 
 echo "=========================================="
-echo " Genome Quality Plotting Pipeline STARTED"
+echo " Generating ALL publication-ready plots"
 echo "=========================================="
 
-########################################
-# Environment check
-########################################
-echo "[INFO] Activating plotting environment..."
-conda activate 05a_qc_plot
+# activate plotting environment
+eval "$(conda shell.bash hook)"
+conda activate 09_plots
 
-########################################
-# 1. Genome quality comparison
-########################################
-echo "[1/6] Generating CheckM2 + BUSCO + QUAST comparison..."
-python "$BASE/05a_compare_genome_quality.py"
+# ensure figures directory exists
+mkdir -p "$FIG_DIR"
 
-########################################
-# 2. Dotplots
-########################################
-echo "[2/6] Generating dotplots (genome & plasmids)..."
-conda activate 05b_dotplot
-python "$BASE/05b_generate_dotplots.py"
+echo "[1/8] CheckM2 assembly quality"
+python "$SCRIPT_DIR/01_checkm2_assembly_quality.py"
 
-########################################
-# 3. Coverage analysis (already mapped)
-########################################
-echo "[3/6] Plotting coverage profiles..."
-conda activate 05a_qc_plot
-python "$BASE/05c_plot_coverage.py"
+echo "[2/8] BUSCO comparison"
+python "$SCRIPT_DIR/02_busco_comparison.py"
 
-########################################
-# 4. GC bias analysis
-########################################
-echo "[4/6] Generating GC bias plots..."
-python "$BASE/05c_gc_bias_analysis.py"
+echo "[3/8] QUAST N50 & contigs"
+python "$SCRIPT_DIR/03_quast_n50_contigs.py"
 
-########################################
-# 5. Coverage distribution dashboard
-########################################
-echo "[5/6] Generating coverage distribution dashboard..."
-python "$BASE/05d_coverage_distribution_dashboard.py"
+echo "[4/8] GC content comparison"
+python "$SCRIPT_DIR/04_gc_content_comparison.py"
 
-########################################
-# 6. Plasmid copy number estimation
-########################################
-echo "[6/6] Estimating plasmid copy number..."
-python "$BASE/05e_plasmid_copy_number.py"
+echo "[5/8] Coverage depth comparison"
+python "$SCRIPT_DIR/05_coverage_depth_comparison.py"
 
-########################################
-# FINAL DASHBOARD
-########################################
-echo "[FINAL] Generating integrated genome quality dashboard..."
-python "$BASE/05f_final_genome_quality_dashboard.py"
+echo "[6/8] AMR gene comparison"
+python "$SCRIPT_DIR/06_amr_gene_comparison.py"
+
+echo "[7/8] geNomad classification summary"
+python "$SCRIPT_DIR/07_genomad_summary.py"
+
+echo "[8/8] Integrated overall assembly summary"
+python "$SCRIPT_DIR/08_overall_assembly_summary.py"
 
 echo "=========================================="
-echo " Plotting Pipeline COMPLETE"
+echo " ALL PLOTS GENERATED SUCCESSFULLY"
+echo " Output directory:"
+echo "   $FIG_DIR"
 echo "=========================================="
-
-echo "Outputs saved in:"
-echo "  06_genome_quality_assessment/"
-echo "   ├── genome_quality_dashboard.html"
-echo "   ├── coverage/"
-echo "   ├── dotplots/"
-echo "   ├── gc_bias/"
-echo "   └── plasmid_copy_number/"
-echo "=========================================="
+echo "✅ All plots completed."
