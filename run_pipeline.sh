@@ -37,6 +37,9 @@ bash "$BASE/04_genome_assembly.sh"
 echo "[5/8] Genome quality assessment..."
 bash "$BASE/05_genome_quality_assessment.sh"
 
+echo "[5a] Coverage depth analysis..."
+bash "$BASE/05a_coverage_analysis.sh"
+
 ########################################
 # 6. Genome annotation
 ########################################
