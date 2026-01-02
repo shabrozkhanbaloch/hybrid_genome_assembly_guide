@@ -123,10 +123,10 @@ plt.tight_layout()
 # ======================================================
 # Save
 # ======================================================
-plt.savefig(OUT / "checkm2_completeness_contamination.png", dpi=300)
+plt.savefig(OUT / "Figure1_checkm2_completeness_contamination.png", dpi=300)
 plt.close()
 
 print("✅ CheckM2 comparison plot generated")
 print("📁 Output:")
-print(" - 11_plots/figures/checkm2_completeness_contamination.png")
+print(" - 11_plots/figures/Figure1_checkm2_completeness_contamination.png")
 

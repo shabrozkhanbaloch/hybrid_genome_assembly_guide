@@ -8,40 +8,16 @@ echo " Cleaning PLOTS & VISUALIZATION DIRECTORIES"
 echo "=========================================="
 
 ########################################
-# 1. Remove coverage plots & data
+# 1. Remove all files in figures directory
 ########################################
-echo "[1/5] Removing coverage directory..."
-rm -rf "$BASE/coverage" || true
-
+FIGURES_DIR="${BASE}/11_plots/figures"
+if [ -d "$FIGURES_DIR" ]; then
+    echo "Removing all files in ${FIGURES_DIR}..."
+    rm -rf "${FIGURES_DIR:?}/"*
+    echo "All files removed from ${FIGURES_DIR}."
+else
+    echo "Directory ${FIGURES_DIR} does not exist. Creating it now..."
+    mkdir -p "$FIGURES_DIR"
+    echo "Directory ${FIGURES_DIR} created."
+fi  
 ########################################
-# 2. Remove dotplots
-########################################
-echo "[2/5] Removing dotplots directory..."
-rm -rf "$BASE/dotplots" || true
-
-########################################
-# 3. Remove GC bias plots
-########################################
-echo "[3/5] Removing GC bias directory..."
-rm -rf "$BASE/gc_bias" || true
-
-########################################
-# 4. Remove plasmid copy number plots
-########################################
-echo "[4/5] Removing plasmid copy number directory..."
-rm -rf "$BASE/plasmid_copy_number" || true
-
-########################################
-# 5. Remove leftover HTML files (safety)
-########################################
-echo "[5/5] Removing stray HTML files..."
-find "$BASE" -type f -name "*.html" -delete || true
-
-echo "=========================================="
-echo " Plot directories cleanup COMPLETE"
-echo "=========================================="
-
-echo "Retained (SAFE):"
-echo " - checkm2/"
-echo " - busco/"
-echo " - quast/"

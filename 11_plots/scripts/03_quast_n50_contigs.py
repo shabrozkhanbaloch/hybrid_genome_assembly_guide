@@ -123,9 +123,9 @@ plt.tight_layout()
 # ======================================================
 # Save
 # ======================================================
-plt.savefig(OUT / "quast_n50_contigs.png", dpi=300)
+plt.savefig(OUT / "Figure3_quast_n50_contigs.png", dpi=300)
 plt.close()
 
 print("✅ QUAST comparison plot generated")
 print("📁 Output:")
-print(" - 11_plots/figures/quast_n50_contigs.png")
+print(" - 11_plots/figures/Figure3_quast_n50_contigs.png")

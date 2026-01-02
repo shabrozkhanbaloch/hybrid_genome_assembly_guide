@@ -98,10 +98,10 @@ plt.tight_layout()
 # ======================================================
 # Save
 # ======================================================
-plt.savefig(OUT / "busco_comparison.png", dpi=300)
+plt.savefig(OUT / "Figure2_busco_comparison.png", dpi=300)
 plt.close()
 
 print("✅ BUSCO comparison plot generated successfully")
 print("📁 Output:")
-print(" - 11_plots/figures/busco_comparison.png")
+print(" - 11_plots/figures/Figure2_busco_comparison.png")
 
