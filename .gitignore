@@ -1,37 +1,59 @@
-# ===== RAW & PROCESSED DATA =====
+# ===============================
+# RAW & PROCESSED DATA
+# ===============================
 *.fastq
 *.fastq.gz
-
-# ===== ASSEMBLY OUTPUTS =====
 *.fasta
+*.fa
+*.fna
 *.gfa
 
-# ===== QC & ANALYSIS OUTPUTS =====
+# ===============================
+# ALIGNMENT / COVERAGE
+# ===============================
+*.bam
+*.bai
+*.paf
+*.depth*
+
+# ===============================
+# PROJECT OUTPUTS (NO RESULTS IN GIT)
+# ===============================
+PROJECTS/
+data/
+results/
+figures/
+busco_downloads/
+
+# ===============================
+# QC / ANALYSIS OUTPUTS
+# ===============================
 02_qc_before_processing/
+03_processed_reads/
 04_qc_after_processing/
+05_genome_assembly/
 06_genome_quality_assessment/
 07_genome_annotation/
 08_plassembler/
 09_abricate/
 10_genomad/
+11_plots/
 
-# ===== ALIGNMENT / COVERAGE =====
-*.bam
-*.bai
-*.depth*
-*.paf
-
-# ===== REPORTS =====
+# ===============================
+# REPORTS
+# ===============================
 *.html
-fastp.json
-fastp.html
+*.json
 
-# ===== Plotly bundles =====
-np
-go
-pd
-
-# Tool logs
+# ===============================
+# LOGS
+# ===============================
 *.log
-unicycler.log
-busco_*.log
+
+# ===============================
+# PYTHON / PLOT JUNK
+# ===============================
+__pycache__/
+np/
+pd/
+go/
