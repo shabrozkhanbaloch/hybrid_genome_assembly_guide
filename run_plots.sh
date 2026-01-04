@@ -1,13 +1,25 @@
 #!/bin/bash
 set -euo pipefail
 
-BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
-PLOT_DIR="$BASE/11_plots"
-SCRIPT_DIR="$PLOT_DIR/scripts"
-FIG_DIR="$PLOT_DIR/figures"
+# ===============================
+# INPUT ARGUMENT
+# ===============================
+PROJECT_DIR=$1
+
+if [ -z "$PROJECT_DIR" ]; then
+  echo "Usage: run_plots.sh <PROJECT_DIR>"
+  exit 1
+fi
+
+PIPELINE_BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
+
+SCRIPT_DIR="$PIPELINE_BASE/11_plots/scripts"
+FIG_DIR="$PROJECT_DIR/figures"
+RESULTS="$PROJECT_DIR/results"
 
 echo "=========================================="
 echo " Generating ALL publication-ready plots"
+echo " Project: $PROJECT_DIR"
 echo "=========================================="
 
 # activate plotting environment
@@ -16,6 +28,9 @@ conda activate 09_plots
 
 # ensure figures directory exists
 mkdir -p "$FIG_DIR"
+
+export RESULTS_DIR="$RESULTS"
+export FIGURES_DIR="$FIG_DIR"
 
 echo "[1/8] CheckM2 assembly quality"
 python "$SCRIPT_DIR/01_checkm2_assembly_quality.py"
@@ -47,3 +62,4 @@ echo " Output directory:"
 echo "   $FIG_DIR"
 echo "=========================================="
 echo "✅ All plots completed."
+cd
