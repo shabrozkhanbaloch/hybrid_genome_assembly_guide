@@ -19,7 +19,7 @@ PIPELINE_BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
 # ===============================
 # PROJECT PATHS
 # ===============================
-RAW="$PROJECT_DIR/data/raw_reads"
+RAW="$PROJECT_DIR/data"
 RESULTS="$PROJECT_DIR/results"
 FIGURES="$PROJECT_DIR/figures"
 

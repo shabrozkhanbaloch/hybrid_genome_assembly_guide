@@ -1,23 +1,38 @@
 #!/bin/bash
 set -euo pipefail
 
-# ===============================
-# INPUT ARGUMENT
-# ===============================
-RESULTS=$1
+PROJECT_DIR=$1
 
-if [ -z "$RESULTS" ]; then
-  echo "Usage: 01_make_directories.sh <RESULTS_DIR>"
-  echo "Example: 01_make_directories.sh /data/wgs_assembly/PROJECTS/paper_02"
+if [ -z "$PROJECT_DIR" ]; then
+  echo "Usage: 00_make_directories.sh <PROJECT_DIR>"
   exit 1
 fi
 
-BASE="$RESULTS"
-
-echo "📁 Creating directory structure in: $BASE"
+BASE="$PROJECT_DIR/results"
 
 # ===============================
-# ASSEMBLIES
+# QC before processing
+# ===============================
+mkdir -p \
+  "$BASE/qc_before/short_reads" \
+  "$BASE/qc_before/long_reads"
+
+# ===============================
+# Processed reads
+# ===============================
+mkdir -p \
+  "$BASE/processed_reads/short_reads" \
+  "$BASE/processed_reads/long_reads"
+
+# ===============================
+# QC after processing
+# ===============================
+mkdir -p \
+  "$BASE/qc_after/short_reads" \
+  "$BASE/qc_after/long_reads"
+
+# ===============================
+# Genome assemblies
 # ===============================
 mkdir -p \
   "$BASE/assembly/01_short_only" \
@@ -25,42 +40,28 @@ mkdir -p \
   "$BASE/assembly/03_hybrid"
 
 # ===============================
-# QUALITY ASSESSMENT
+# Genome quality assessment
 # ===============================
 mkdir -p \
-  "$BASE/results/quality/checkm2"/{short_only,long_only,hybrid} \
-  "$BASE/results/quality/quast"/{01_short_only,02_long_only,03_hybrid} \
-  "$BASE/results/quality/busco"/{short_only,long_only,hybrid} \
-  "$BASE/results/quality/coverage"
+  "$BASE/quality/checkm2"/{short_only,long_only,hybrid} \
+  "$BASE/quality/quast"/{01_short_only,02_long_only,03_hybrid} \
+  "$BASE/quality/busco"/{short_only,long_only,hybrid} \
+  "$BASE/quality/coverage"
 
 # ===============================
-# ANNOTATION
+# Genome annotation
 # ===============================
 mkdir -p \
-  "$BASE/results/annotation/prokka"/{01_short_only,02_long_only,03_hybrid} \
-  "$BASE/results/annotation/bakta"/{01_short_only,02_long_only,03_hybrid}
+  "$BASE/annotation/prokka"/{01_short_only,02_long_only,03_hybrid} \
+  "$BASE/annotation/bakta"/{01_short_only,02_long_only,03_hybrid}
 
 # ===============================
-# PLASMIDS
+# Plasmids + AMR + Prophage
 # ===============================
 mkdir -p \
-  "$BASE/results/plasmids"/{plassembler,unicycler,flye}
+  "$BASE/plasmids" \
+  "$BASE/amr"/{assembly_level,plasmid_level} \
+  "$BASE/prophage"/{assembly_level,plasmid_level}
 
-# ===============================
-# AMR
-# ===============================
-mkdir -p \
-  "$BASE/results/amr"/{assembly_level,plasmid_level}
-
-# ===============================
-# PHAGE / MGE (geNomad)
-# ===============================
-mkdir -p \
-  "$BASE/results/prophage"/{assembly_level,plasmid_level}
-
-# ===============================
-# FIGURES
-# ===============================
-mkdir -p "$BASE/figures"
-
-echo "✅ Directory structure created successfully."
+echo "✅ Project directory structure created:"
+echo "   $PROJECT_DIR"
