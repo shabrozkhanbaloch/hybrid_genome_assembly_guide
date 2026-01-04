@@ -1,67 +1,66 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
+# ===============================
+# INPUT ARGUMENT
+# ===============================
+RESULTS=$1
 
-# QC before processing
+if [ -z "$RESULTS" ]; then
+  echo "Usage: 01_make_directories.sh <RESULTS_DIR>"
+  echo "Example: 01_make_directories.sh /data/wgs_assembly/PROJECTS/paper_02"
+  exit 1
+fi
+
+BASE="$RESULTS"
+
+echo "📁 Creating directory structure in: $BASE"
+
+# ===============================
+# ASSEMBLIES
+# ===============================
 mkdir -p \
-  "$BASE/02_qc_before_processing/short_reads" \
-  "$BASE/02_qc_before_processing/long_reads"
+  "$BASE/assembly/01_short_only" \
+  "$BASE/assembly/02_long_only" \
+  "$BASE/assembly/03_hybrid"
 
-# Processed reads
+# ===============================
+# QUALITY ASSESSMENT
+# ===============================
 mkdir -p \
-  "$BASE/03_processed_reads/short_reads" \
-  "$BASE/03_processed_reads/long_reads"
+  "$BASE/results/quality/checkm2"/{short_only,long_only,hybrid} \
+  "$BASE/results/quality/quast"/{01_short_only,02_long_only,03_hybrid} \
+  "$BASE/results/quality/busco"/{short_only,long_only,hybrid} \
+  "$BASE/results/quality/coverage"
 
-# QC after processing
+# ===============================
+# ANNOTATION
+# ===============================
 mkdir -p \
-  "$BASE/04_qc_after_processing/short_reads" \
-  "$BASE/04_qc_after_processing/long_reads"
+  "$BASE/results/annotation/prokka"/{01_short_only,02_long_only,03_hybrid} \
+  "$BASE/results/annotation/bakta"/{01_short_only,02_long_only,03_hybrid}
 
-# Genome assemblies
+# ===============================
+# PLASMIDS
+# ===============================
 mkdir -p \
-  "$BASE/05_genome_assembly/01_short_only" \
-  "$BASE/05_genome_assembly/02_long_only" \
-  "$BASE/05_genome_assembly/03_hybrid"
+  "$BASE/results/plasmids"/{plassembler,unicycler,flye}
 
-# Genome quality assessment
+# ===============================
+# AMR
+# ===============================
 mkdir -p \
-  "$BASE/06_genome_quality_assessment/checkm2/short_only" \
-  "$BASE/06_genome_quality_assessment/checkm2/long_only" \
-  "$BASE/06_genome_quality_assessment/checkm2/hybrid"
+  "$BASE/results/amr"/{assembly_level,plasmid_level}
 
+# ===============================
+# PHAGE / MGE (geNomad)
+# ===============================
 mkdir -p \
-  "$BASE/06_genome_quality_assessment/quast/short_only" \
-  "$BASE/06_genome_quality_assessment/quast/long_only" \
-  "$BASE/06_genome_quality_assessment/quast/hybrid"
+  "$BASE/results/prophage"/{assembly_level,plasmid_level}
 
-mkdir -p \
-  "$BASE/06_genome_quality_assessment/busco/short_only" \
-  "$BASE/06_genome_quality_assessment/busco/long_only" \
-  "$BASE/06_genome_quality_assessment/busco/hybrid"
+# ===============================
+# FIGURES
+# ===============================
+mkdir -p "$BASE/figures"
 
-# Genome annotation
-mkdir -p \
-  "$BASE/07_genome_annotation/prokka/short_only" \
-  "$BASE/07_genome_annotation/prokka/long_only" \
-  "$BASE/07_genome_annotation/prokka/hybrid"
-
-mkdir -p \
-  "$BASE/07_genome_annotation/bakta/short_only" \
-  "$BASE/07_genome_annotation/bakta/long_only" \
-  "$BASE/07_genome_annotation/bakta/hybrid"
-
-# Plasmid & MGE analyses
-mkdir -p "$BASE/08_plassembler"
-
-mkdir -p \
-  "$BASE/09_abricate/assembly_level" \
-  "$BASE/09_abricate/plasmid_level"
-
-mkdir -p \
-  "$BASE/10_genomad/assembly_level" \
-  "$BASE/10_genomad/plasmid_level"
-
-chmod +x 01_make_directories.sh
-
-echo "Directory structure created successfully."
+echo "✅ Directory structure created successfully."
