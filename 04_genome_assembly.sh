@@ -3,11 +3,19 @@ set -euo pipefail
 
 eval "$(conda shell.bash hook)"
 
-BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
+# ===============================
+# INPUT ARGUMENT
+# ===============================
+RESULTS=$1
 
-SHORT_PROC="$BASE/03_processed_reads/short_reads"
-LONG_PROC="$BASE/03_processed_reads/long_reads"
-ASM_OUT="$BASE/05_genome_assembly"
+if [ -z "$RESULTS" ]; then
+  echo "Usage: 04_genome_assembly.sh <RESULTS_DIR>"
+  exit 1
+fi
+
+SHORT_PROC="$RESULTS/processed_reads/short_reads"
+LONG_PROC="$RESULTS/processed_reads/long_reads"
+ASM_OUT="$RESULTS/assembly"
 
 mkdir -p \
   "$ASM_OUT/01_short_only" \

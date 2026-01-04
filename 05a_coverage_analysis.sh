@@ -2,18 +2,31 @@
 set -euo pipefail
 
 eval "$(conda shell.bash hook)"
-conda activate 04_unicycler   # has minimap2 + samtools
+conda activate 04_unicycler   # minimap2 + samtools
 
-BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
+# ===============================
+# INPUT ARGUMENT
+# ===============================
+RESULTS=$1
 
-SHORT_ASM="$BASE/05_genome_assembly/01_short_only/assembly.fasta"
-HYBRID_ASM="$BASE/05_genome_assembly/03_hybrid/assembly.fasta"
+if [ -z "$RESULTS" ]; then
+  echo "Usage: 05a_coverage_analysis.sh <RESULTS_DIR>"
+  exit 1
+fi
 
-SR1="$BASE/03_processed_reads/short_reads/processed_1.fastq.gz"
-SR2="$BASE/03_processed_reads/short_reads/processed_2.fastq.gz"
-LR="$BASE/03_processed_reads/long_reads/processed_long.fastq.gz"
+# ===============================
+# Paths (project-aware)
+# ===============================
+ASM="$RESULTS/assembly"
+PROC="$RESULTS/processed_reads"
+OUT="$RESULTS/quality/coverage"
 
-OUT="$BASE/06_genome_quality_assessment/coverage"
+SHORT_ASM="$ASM/01_short_only/assembly.fasta"
+HYBRID_ASM="$ASM/03_hybrid/assembly.fasta"
+
+SR1="$PROC/short_reads/processed_1.fastq.gz"
+SR2="$PROC/short_reads/processed_2.fastq.gz"
+LR="$PROC/long_reads/processed_long.fastq.gz"
 
 mkdir -p \
   "$OUT/short_reads/short_vs_short" \

@@ -7,13 +7,23 @@ set -euo pipefail
 
 eval "$(conda shell.bash hook)"
 
-BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
+# ===============================
+# INPUT ARGUMENT
+# ===============================
+RESULTS=$1
 
-SHORT1="$BASE/03_processed_reads/short_reads/processed_1.fastq.gz"
-SHORT2="$BASE/03_processed_reads/short_reads/processed_2.fastq.gz"
-LONG="$BASE/03_processed_reads/long_reads/processed_long.fastq.gz"
+if [ -z "$RESULTS" ]; then
+  echo "Usage: 07_plassembler.sh <RESULTS_DIR>"
+  exit 1
+fi
 
-OUT="$BASE/08_plassembler"
+PROC="$RESULTS/processed_reads"
+
+SHORT1="$PROC/short_reads/processed_1.fastq.gz"
+SHORT2="$PROC/short_reads/processed_2.fastq.gz"
+LONG="$PROC/long_reads/processed_long.fastq.gz"
+
+OUT="$RESULTS/plasmids"
 DB="/data/databases_important/plassembler_db"
 
 mkdir -p "$OUT"
@@ -50,5 +60,5 @@ plassembler run \
 echo "Plassembler plasmid reconstruction complete."
 echo "Results saved in: $OUT"
 echo "Key outputs:"
-echo "  - $OUT/final_plasmids/        (plasmid FASTAs)"
-echo "  - $OUT/plasmid_report.tsv     (classification + metadata)"
+echo "  - $OUT/final_plasmids/"
+echo "  - $OUT/plasmid_report.tsv"

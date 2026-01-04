@@ -4,9 +4,18 @@ set -euo pipefail
 eval "$(conda shell.bash hook)"
 conda activate 05_genome_annotation
 
-BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
-ASM="$BASE/05_genome_assembly"
-ANN="$BASE/07_genome_annotation"
+# ===============================
+# INPUT ARGUMENT
+# ===============================
+RESULTS=$1
+
+if [ -z "$RESULTS" ]; then
+  echo "Usage: 06_genome_annotation.sh <RESULTS_DIR>"
+  exit 1
+fi
+
+ASM="$RESULTS/assembly"
+ANN="$RESULTS/annotation"
 BAKTA_DB="/data/databases_important/bakta_db/db-light"
 
 mkdir -p \
@@ -48,7 +57,6 @@ prokka \
   "$ASM/03_hybrid/assembly.fasta" \
   --force
 
-
 ############################
 # BAKTA
 ############################
@@ -84,3 +92,4 @@ bakta \
   --force
 
 echo "Genome annotation complete (Prokka + Bakta: short, long, hybrid)."
+echo "Results saved in: $ANN"

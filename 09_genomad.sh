@@ -4,11 +4,20 @@ set -euo pipefail
 eval "$(conda shell.bash hook)"
 conda activate 08_genomad
 
-BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
-ASM="$BASE/05_genome_assembly/03_hybrid/assembly.fasta"
-PLASM="$BASE/08_plassembler/plassembler_plasmids.fasta"
+# ===============================
+# INPUT ARGUMENT
+# ===============================
+RESULTS=$1
+
+if [ -z "$RESULTS" ]; then
+  echo "Usage: 09_genomad.sh <RESULTS_DIR>"
+  exit 1
+fi
+
+ASM="$RESULTS/assembly/03_hybrid/assembly.fasta"
+PLASM="$RESULTS/plasmids/plassembler_plasmids.fasta"
 DB="/data/databases_important/genomad_db"
-OUT="$BASE/10_genomad"
+OUT="$RESULTS/prophage"
 
 # clean old results
 rm -rf "$OUT"

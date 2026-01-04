@@ -3,13 +3,22 @@ set -euo pipefail
 
 eval "$(conda shell.bash hook)"
 
-BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
+# ===============================
+# INPUT ARGUMENTS
+# ===============================
+RAW=$1
+RESULTS=$2
 
-RAW_SHORT="$BASE/01_raw_reads/short_reads"
-RAW_LONG="$BASE/01_raw_reads/long_reads"
+if [ -z "$RAW" ] || [ -z "$RESULTS" ]; then
+  echo "Usage: 02_qc_reads_before_processing.sh <RAW_DIR> <RESULTS_DIR>"
+  exit 1
+fi
 
-QC_SHORT="$BASE/02_qc_before_processing/short_reads"
-QC_LONG="$BASE/02_qc_before_processing/long_reads"
+RAW_SHORT="$RAW/short_reads"
+RAW_LONG="$RAW/long_reads"
+
+QC_SHORT="$RESULTS/qc_before/short_reads"
+QC_LONG="$RESULTS/qc_before/long_reads"
 
 mkdir -p "$QC_SHORT" "$QC_LONG"
 
