@@ -26,7 +26,7 @@ figures/
 busco_downloads/
 
 # ===============================
-# QC / ANALYSIS OUTPUTS
+# PIPELINE OUTPUTS (IGNORE RESULTS ONLY)
 # ===============================
 02_qc_before_processing/
 03_processed_reads/
@@ -37,7 +37,15 @@ busco_downloads/
 08_plassembler/
 09_abricate/
 10_genomad/
-11_plots/
+
+# ===============================
+# PLOTS: ignore figures, allow scripts
+# ===============================
+11_plots/figures/
+11_plots/*.png
+11_plots/*.pdf
+!11_plots/scripts/
+!11_plots/scripts/*.py
 
 # ===============================
 # REPORTS
@@ -51,7 +59,7 @@ busco_downloads/
 *.log
 
 # ===============================
-# PYTHON / PLOT JUNK
+# PYTHON / JUNK
 # ===============================
 __pycache__/
 np/

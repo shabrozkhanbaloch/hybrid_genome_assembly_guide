@@ -4,116 +4,119 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# -----------------------------
-# Paths
-# -----------------------------
-BASE = Path("10_genomad")
+# ======================================================
+# Project paths (robust)
+# ======================================================
+PROJECT_DIR = Path("/data/wgs_assembly/PROJECTS/paper_02")
+RESULTS = PROJECT_DIR / "results"
+OUTDIR = PROJECT_DIR / "figures"
+OUTDIR.mkdir(parents=True, exist_ok=True)
 
-HYBRID_FILE = BASE / "assembly_level/assembly_aggregated_classification/assembly_aggregated_classification.tsv"
-PLASMID_FILE = BASE / "plasmid_level/plassembler_plasmids_aggregated_classification/plassembler_plasmids_aggregated_classification.tsv"
+GENOMAD = RESULTS / "prophage"
 
-OUT = Path("11_plots/figures")
-OUT.mkdir(parents=True, exist_ok=True)
+# ======================================================
+# Correct geNomad summary files (REAL ones)
+# ======================================================
+ASM_VIRUS = GENOMAD / "assembly_level/assembly_summary/assembly_virus_summary.tsv"
+ASM_PLASMID = GENOMAD / "assembly_level/assembly_summary/assembly_plasmid_summary.tsv"
 
-# -----------------------------
-# Load data
-# -----------------------------
-def load_counts(path):
-    if not path.exists():
-        raise FileNotFoundError(f"Missing geNomad file: {path}")
+PLS_VIRUS = GENOMAD / "plasmid_level/plassembler_plasmids_summary/plassembler_plasmids_virus_summary.tsv"
+PLS_PLASMID = GENOMAD / "plasmid_level/plassembler_plasmids_summary/plassembler_plasmids_plasmid_summary.tsv"
 
+files = [ASM_VIRUS, ASM_PLASMID, PLS_VIRUS, PLS_PLASMID]
+for f in files:
+    if not f.exists():
+        raise FileNotFoundError(f"Missing geNomad file: {f}")
+
+# ======================================================
+# Count contigs
+# ======================================================
+def count_contigs(path):
     df = pd.read_csv(path, sep="\t")
+    return df.shape[0]
 
-    # geNomad gives scores, not labels → take max score as class
-    class_map = {
-        "virus_score": "Virus",
-        "plasmid_score": "Plasmid",
-        "chromosome_score": "Chromosome",
-    }
-
-    scores = df[list(class_map.keys())]
-    labels = scores.idxmax(axis=1).map(class_map)
-
-    return labels.value_counts().to_dict()
-
-hybrid_counts = load_counts(HYBRID_FILE)
-plasmid_counts = load_counts(PLASMID_FILE)
-
-# -----------------------------
-# Categories
-# -----------------------------
-hybrid_labels = ["Virus", "Plasmid", "Chromosome"]
-hybrid_values = [hybrid_counts.get(k, 0) for k in hybrid_labels]
-
-plasmid_labels = ["Virus", "Plasmid"]          # ✅ Chromosome removed
-plasmid_values = [plasmid_counts.get(k, 0) for k in plasmid_labels]
-
-# Color-blind friendly palette
-colors = {
-    "Virus": "#0072B2",
-    "Plasmid": "#D55E00",
-    "Chromosome": "#009E73",
+assembly_counts = {
+    "Virus": count_contigs(ASM_VIRUS),
+    "Plasmid": count_contigs(ASM_PLASMID),
 }
 
-# -----------------------------
+plasmid_counts = {
+    "Virus": count_contigs(PLS_VIRUS),
+    "Plasmid": count_contigs(PLS_PLASMID),
+}
+
+# ======================================================
 # Plot
-# -----------------------------
-fig, axes = plt.subplots(1, 2, figsize=(10, 4), sharey=True)
+# ======================================================
+plt.style.use("seaborn-v0_8-whitegrid")
 
-# Hybrid assembly
-bars1 = axes[0].bar(
-    hybrid_labels,
-    hybrid_values,
-    color=[colors[k] for k in hybrid_labels]
+colors = {
+    "Virus": "#0072B2",      # blue
+    "Plasmid": "#D55E00",    # vermillion
+}
+
+fig, axes = plt.subplots(1, 2, figsize=(9, 4), sharey=True)
+
+# ---- Hybrid assembly ----
+ax = axes[0]
+bars = ax.bar(
+    assembly_counts.keys(),
+    assembly_counts.values(),
+    color=[colors[k] for k in assembly_counts],
+    edgecolor="black"
 )
-axes[0].set_title("Hybrid Assembly")
-axes[0].set_ylabel("Number of contigs")
+ax.set_title("Hybrid assembly")
+ax.set_ylabel("Number of contigs")
 
-# Plasmid assembly
-bars2 = axes[1].bar(
-    plasmid_labels,
-    plasmid_values,
-    color=[colors[k] for k in plasmid_labels]
+for b in bars:
+    ax.text(
+        b.get_x() + b.get_width() / 2,
+        b.get_height() + 0.5,
+        str(int(b.get_height())),
+        ha="center",
+        fontsize=10
+    )
+
+# ---- Plasmid assembly ----
+ax = axes[1]
+bars = ax.bar(
+    plasmid_counts.keys(),
+    plasmid_counts.values(),
+    color=[colors[k] for k in plasmid_counts],
+    edgecolor="black"
 )
-axes[1].set_title("Plasmid Assembly")
+ax.set_title("Plassembler plasmids")
 
-# -----------------------------
-# Numbers on bars
-# -----------------------------
-def label_bars(bars, ax):
-    for b in bars:
-        h = b.get_height()
-        ax.text(
-            b.get_x() + b.get_width() / 2,
-            h + 0.05,
-            f"{int(h)}",
-            ha="center",
-            va="bottom",
-            fontsize=10
-        )
+for b in bars:
+    ax.text(
+        b.get_x() + b.get_width() / 2,
+        b.get_height() + 0.5,
+        str(int(b.get_height())),
+        ha="center",
+        fontsize=10
+    )
 
-label_bars(bars1, axes[0])
-label_bars(bars2, axes[1])
-
-# -----------------------------
-# Legend (outside, top)
-# -----------------------------
-handles = [plt.Rectangle((0, 0), 1, 1, color=colors[k]) for k in colors]
-labels = list(colors.keys())
-
+# ---- Global legend ----
+handles = [plt.Line2D([0], [0], color=colors[k], lw=8) for k in colors]
 fig.legend(
     handles,
-    labels,
+    colors.keys(),
     loc="upper center",
-    ncol=3,
+    ncol=2,
+    bbox_to_anchor=(0.5, 1.08),
     frameon=True
 )
 
 fig.suptitle(
-    "Figure 7. geNomad-based Classification of Contigs in Hybrid and Plasmid Assemblies",
-    y=1.08
+    "Figure 7. geNomad-based classification of viral and plasmid contigs",
+    y=1.15
 )
 
 plt.tight_layout()
-plt.savefig(OUT / "Figure7_geNomad_Classification.png", dpi=300, bbox_inches="tight")
-plt.show()
+
+out = OUTDIR / "Figure7_geNomad_Classification.png"
+plt.savefig(out, dpi=300, bbox_inches="tight")
+plt.close()
+
+print("✅ Figure 7 generated successfully")
+print(f"📁 Output: {out}")

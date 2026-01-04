@@ -1,25 +1,42 @@
 #!/usr/bin/env python3
 
-import matplotlib.pyplot as plt
 import pandas as pd
+import matplotlib.pyplot as plt
 from Bio import SeqIO
 from pathlib import Path
 import numpy as np
+import os
+import sys
 
 # ======================================================
-# Paths
+# ENV CHECK
 # ======================================================
-BASE = Path("05_genome_assembly")
-OUTDIR = Path("11_plots/figures")
-OUTDIR.mkdir(parents=True, exist_ok=True)
+if "RESULTS_DIR" not in os.environ or "FIGURES_DIR" not in os.environ:
+    sys.exit("❌ RESULTS_DIR or FIGURES_DIR not set. Use run_plots.sh")
 
+RESULTS = Path(os.environ["RESULTS_DIR"])
+FIGDIR  = Path(os.environ["FIGURES_DIR"])
+FIGDIR.mkdir(parents=True, exist_ok=True)
+
+# ======================================================
+# ASSEMBLY FASTA PATHS (RESULTS-BASED)
+# ======================================================
 assemblies = {
-    "Short-read": BASE / "01_short_only/assembly.fasta",
-    "Long-read":  BASE / "02_long_only/assembly.fasta",
-    "Hybrid":     BASE / "03_hybrid/assembly.fasta",
+    "Short-read": RESULTS / "assembly/01_short_only/assembly.fasta",
+    "Long-read":  RESULTS / "assembly/02_long_only/assembly.fasta",
+    "Hybrid":     RESULTS / "assembly/03_hybrid/assembly.fasta",
 }
 
-# Okabe–Ito color-blind friendly palette
+# ======================================================
+# CHECK FILES
+# ======================================================
+for name, path in assemblies.items():
+    if not path.exists():
+        sys.exit(f"❌ Missing assembly FASTA: {path}")
+
+# ======================================================
+# COLOR-BLIND FRIENDLY (OKABE–ITO)
+# ======================================================
 COLORS = {
     "Short-read": "#E69F00",  # orange
     "Long-read":  "#0072B2",  # blue
@@ -27,13 +44,13 @@ COLORS = {
 }
 
 # ======================================================
-# GC calculation
+# GC CALCULATION
 # ======================================================
 def gc_content(seq: str) -> float:
     seq = seq.upper()
-    gc = seq.count("G") + seq.count("C")
-    return (gc / len(seq)) * 100 if len(seq) > 0 else 0
-
+    if len(seq) == 0:
+        return 0
+    return (seq.count("G") + seq.count("C")) / len(seq) * 100
 
 data = []
 
@@ -47,60 +64,68 @@ for label, fasta in assemblies.items():
 df = pd.DataFrame(data)
 
 # ======================================================
-# Plot
+# ORDER (IMPORTANT FOR STORY)
 # ======================================================
-fig, ax = plt.subplots(figsize=(9, 5))
-
+order = ["Short-read", "Long-read", "Hybrid"]
 groups = df.groupby("Assembly")["GC"]
-positions = np.arange(len(groups)) + 1
+data_ordered = [groups.get_group(k) for k in order]
 
-# Violin plots
+positions = np.arange(len(order)) + 1
+
+# ======================================================
+# PLOT
+# ======================================================
+plt.style.use("seaborn-v0_8-whitegrid")
+fig, ax = plt.subplots(figsize=(8, 5))
+
+# ---- violin
 violins = ax.violinplot(
-    [groups.get_group(g) for g in groups.groups],
+    data_ordered,
     positions=positions,
-    widths=0.8,
+    widths=0.75,
     showmeans=False,
     showmedians=False,
     showextrema=False
 )
 
-for body, label in zip(violins["bodies"], groups.groups):
+for body, label in zip(violins["bodies"], order):
     body.set_facecolor(COLORS[label])
     body.set_edgecolor("black")
     body.set_alpha(0.9)
 
-# Boxplots inside violins
+# ---- boxplot inside
 ax.boxplot(
-    [groups.get_group(g) for g in groups.groups],
+    data_ordered,
     positions=positions,
     widths=0.18,
     patch_artist=True,
     boxprops=dict(facecolor="white", edgecolor="black"),
-    medianprops=dict(color="black"),
+    medianprops=dict(color="black", linewidth=2),
     whiskerprops=dict(color="black"),
     capprops=dict(color="black")
 )
 
-# Mean points + labels
-for i, label in enumerate(groups.groups, start=1):
-    mean_gc = groups.get_group(label).mean()
-    ax.scatter(i, mean_gc, color="black", s=60, zorder=4)
+# ---- mean points + labels
+for i, label in enumerate(order, start=1):
+    mean_gc = data_ordered[i-1].mean()
+    ax.scatter(i, mean_gc, color="black", s=50, zorder=5)
     ax.text(
-        i, mean_gc + 0.4,
+        i,
+        mean_gc + 0.6,
         f"{mean_gc:.2f}%",
         ha="center",
+        va="bottom",
         fontsize=10,
         fontweight="bold"
     )
 
 # ======================================================
-# Formatting
+# FORMATTING (NATURE STYLE)
 # ======================================================
 ax.set_xticks(positions)
-ax.set_xticklabels(groups.groups, fontsize=11)
-
+ax.set_xticklabels(order, fontsize=11)
 ax.set_ylabel("GC content (%)", fontsize=12)
-ax.set_ylim(30, 46)  # tight biologically meaningful range
+ax.set_ylim(30, 55)
 
 ax.set_title(
     "Figure 4. GC Content Distribution Across Assemblies\n"
@@ -110,24 +135,14 @@ ax.set_title(
 
 ax.grid(axis="y", linestyle="--", alpha=0.4)
 
-# Legend (outside plot)
-handles = [
-    plt.Line2D([0], [0], color=COLORS[k], lw=8)
-    for k in COLORS
-]
-ax.legend(
-    handles,
-    COLORS.keys(),
-    title="Assembly type",
-    loc="upper left",
-    bbox_to_anchor=(1.02, 1),
-    frameon=True
-)
-
 plt.tight_layout()
 
 # ======================================================
-# Save
+# SAVE
 # ======================================================
-plt.savefig(OUTDIR / "Figure4_GC_Content_Distribution.png", dpi=300)
-plt.show()
+outfile = FIGDIR / "Figure4_GC_Content_Distribution.png"
+plt.savefig(outfile, dpi=300)
+plt.close()
+
+print("✅ GC content comparison plot generated")
+print(f"📁 Output: {outfile}")

@@ -1,13 +1,20 @@
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
 # ======================================================
-# Paths
+# Environment-aware paths (PROJECT-AWARE)
 # ======================================================
-BASE = Path("/data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/checkm2")
-OUT  = Path("/data/wgs_assembly/hybrid_genome_assembly_guide/11_plots/figures")
+RESULTS_DIR = os.environ.get("RESULTS_DIR")
+FIGURES_DIR = os.environ.get("FIGURES_DIR")
+
+if RESULTS_DIR is None or FIGURES_DIR is None:
+    raise RuntimeError("RESULTS_DIR and FIGURES_DIR must be set")
+
+BASE = Path(RESULTS_DIR) / "quality" / "checkm2"
+OUT  = Path(FIGURES_DIR)
 OUT.mkdir(parents=True, exist_ok=True)
 
 assemblies = {
@@ -24,6 +31,9 @@ contamination = []
 # Load data
 # ======================================================
 for name, path in assemblies.items():
+    if not path.exists():
+        raise FileNotFoundError(f"Missing CheckM2 file: {path}")
+
     df = pd.read_csv(path, sep="\t")
     labels.append(name)
     completeness.append(float(df.loc[0, "Completeness_General"]))
@@ -57,9 +67,7 @@ ax1.set_ylim(0, 105)
 ax1.set_xticks(x)
 ax1.set_xticklabels(labels)
 
-# ------------------------------------------------------
 # Bar labels
-# ------------------------------------------------------
 for bar in bars:
     h = bar.get_height()
     ax1.text(
@@ -87,7 +95,6 @@ line = ax2.plot(
 ax2.set_ylabel("Contamination (%)")
 ax2.set_ylim(0, max(contamination) + 1)
 
-# Point labels
 for xi, yi in zip(x, contamination):
     ax2.text(
         xi,
@@ -100,13 +107,10 @@ for xi, yi in zip(x, contamination):
     )
 
 # ======================================================
-# Title
+# Title + legend
 # ======================================================
 ax1.set_title("Assembly Quality Comparison (CheckM2)")
 
-# ======================================================
-# LEGEND — OUTSIDE (RIGHT)
-# ======================================================
 handles = [bars[0], line[0]]
 labels_leg = ["Completeness (%)", "Contamination (%)"]
 
@@ -123,10 +127,8 @@ plt.tight_layout()
 # ======================================================
 # Save
 # ======================================================
-plt.savefig(OUT / "Figure1_checkm2_completeness_contamination.png", dpi=300)
+plt.savefig(OUT / "Figure1_CheckM2_Completeness_Contamination.png", dpi=300)
 plt.close()
 
 print("✅ CheckM2 comparison plot generated")
-print("📁 Output:")
-print(" - 11_plots/figures/Figure1_checkm2_completeness_contamination.png")
-
+print(f"📁 Output: {OUT}")

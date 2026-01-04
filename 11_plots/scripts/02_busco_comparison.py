@@ -1,23 +1,37 @@
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 import re
 
 # ======================================================
-# Paths
+# Environment-aware paths
 # ======================================================
-BASE = Path("/data/wgs_assembly/hybrid_genome_assembly_guide/06_genome_quality_assessment/busco")
-OUT  = Path("/data/wgs_assembly/hybrid_genome_assembly_guide/11_plots/figures")
+RESULTS_DIR = os.environ.get("RESULTS_DIR")
+FIGURES_DIR = os.environ.get("FIGURES_DIR")
+
+if RESULTS_DIR is None or FIGURES_DIR is None:
+    raise RuntimeError("RESULTS_DIR and FIGURES_DIR must be set")
+
+BASE = Path(RESULTS_DIR) / "quality" / "busco"
+OUT  = Path(FIGURES_DIR)
 OUT.mkdir(parents=True, exist_ok=True)
 
 # ======================================================
 # Robust BUSCO parser
 # ======================================================
 def parse_busco(name):
-    summary = BASE / name / "run_bacteria_odb10" / "short_summary.txt"
+    """
+    Works for BUSCO v4 / v5 outputs
+    """
+    # Auto-detect summary file
+    candidates = list((BASE / name).rglob("short_summary*.txt"))
+    if not candidates:
+        raise FileNotFoundError(f"No BUSCO summary found for {name}")
+
+    summary = candidates[0]
     text = summary.read_text()
 
-    # Regex that works across BUSCO versions
     m = re.search(
         r"C:(\d+\.?\d*)%.*F:(\d+\.?\d*)%.*M:(\d+\.?\d*)%",
         text
@@ -80,7 +94,7 @@ for container in ax.containers:
             )
 
 # ------------------------------------------------------
-# Labels & legend (outside)
+# Labels & legend
 # ------------------------------------------------------
 ax.set_ylabel("Percentage of BUSCO genes (%)")
 ax.set_xlabel("")
@@ -98,10 +112,8 @@ plt.tight_layout()
 # ======================================================
 # Save
 # ======================================================
-plt.savefig(OUT / "Figure2_busco_comparison.png", dpi=300)
+plt.savefig(OUT / "Figure2_BUSCO_Comparison.png", dpi=300)
 plt.close()
 
 print("✅ BUSCO comparison plot generated successfully")
-print("📁 Output:")
-print(" - 11_plots/figures/Figure2_busco_comparison.png")
-
+print(f"📁 Output: {OUT}")

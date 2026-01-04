@@ -18,78 +18,65 @@ ASM="$RESULTS/assembly"
 ANN="$RESULTS/annotation"
 BAKTA_DB="/data/databases_important/bakta_db/db-light"
 
+# ===============================
+# SANITY CHECKS
+# ===============================
+[[ -d "$ASM" ]] || { echo "❌ Assembly directory not found: $ASM"; exit 1; }
+[[ -d "$BAKTA_DB" ]] || { echo "❌ Bakta DB not found: $BAKTA_DB"; exit 1; }
+
+for type in 01_short_only 02_long_only 03_hybrid; do
+  [[ -f "$ASM/$type/assembly.fasta" ]] || {
+    echo "❌ Missing assembly: $ASM/$type/assembly.fasta"
+    exit 1
+  }
+done
+
+# ===============================
+# OUTPUT DIRECTORIES
+# ===============================
 mkdir -p \
-  "$ANN/prokka/short_only" \
-  "$ANN/prokka/long_only" \
-  "$ANN/prokka/hybrid" \
-  "$ANN/bakta/short_only" \
-  "$ANN/bakta/long_only" \
-  "$ANN/bakta/hybrid"
+  "$ANN/prokka"/{01_short_only,02_long_only,03_hybrid} \
+  "$ANN/bakta"/{01_short_only,02_long_only,03_hybrid}
 
-############################
+# ===============================
 # PROKKA
-############################
+# ===============================
+echo "🔬 Running Prokka annotations..."
 
-prokka \
-  --outdir "$ANN/prokka/short_only" \
-  --prefix short_prokka \
-  --kingdom Bacteria \
-  --addgenes \
-  --cpus 14 \
-  "$ASM/01_short_only/assembly.fasta" \
-  --force
+for type in 01_short_only 02_long_only 03_hybrid; do
+  echo "  → Prokka: $type"
 
-prokka \
-  --outdir "$ANN/prokka/long_only" \
-  --prefix long_prokka \
-  --kingdom Bacteria \
-  --addgenes \
-  --cpus 14 \
-  "$ASM/02_long_only/assembly.fasta" \
-  --force
+  prokka \
+    --outdir "$ANN/prokka/$type" \
+    --prefix "$type" \
+    --kingdom Bacteria \
+    --addgenes \
+    --cpus 14 \
+    "$ASM/$type/assembly.fasta" \
+    --force
+done
 
-prokka \
-  --outdir "$ANN/prokka/hybrid" \
-  --prefix hybrid_prokka \
-  --kingdom Bacteria \
-  --addgenes \
-  --cpus 14 \
-  "$ASM/03_hybrid/assembly.fasta" \
-  --force
-
-############################
+# ===============================
 # BAKTA
-############################
+# ===============================
+echo "🧬 Running Bakta annotations..."
 
-bakta \
-  "$ASM/01_short_only/assembly.fasta" \
-  --db "$BAKTA_DB" \
-  --threads 14 \
-  --verbose \
-  --output "$ANN/bakta/short_only" \
-  --prefix short_bakta \
-  --complete \
-  --force
+for type in 01_short_only 02_long_only 03_hybrid; do
+  echo "  → Bakta: $type"
 
-bakta \
-  "$ASM/02_long_only/assembly.fasta" \
-  --db "$BAKTA_DB" \
-  --threads 14 \
-  --verbose \
-  --output "$ANN/bakta/long_only" \
-  --prefix long_bakta \
-  --complete \
-  --force
+  bakta \
+    "$ASM/$type/assembly.fasta" \
+    --db "$BAKTA_DB" \
+    --threads 14 \
+    --verbose \
+    --output "$ANN/bakta/$type" \
+    --prefix "$type" \
+    --complete \
+    --force
+done
 
-bakta \
-  "$ASM/03_hybrid/assembly.fasta" \
-  --db "$BAKTA_DB" \
-  --threads 14 \
-  --verbose \
-  --output "$ANN/bakta/hybrid" \
-  --prefix hybrid_bakta \
-  --complete \
-  --force
-
-echo "Genome annotation complete (Prokka + Bakta: short, long, hybrid)."
-echo "Results saved in: $ANN"
+# ===============================
+# DONE
+# ===============================
+echo "✅ Genome annotation completed successfully"
+echo "📁 Results stored in: $ANN"

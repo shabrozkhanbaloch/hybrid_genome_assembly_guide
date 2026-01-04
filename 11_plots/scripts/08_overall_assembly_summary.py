@@ -5,105 +5,126 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
-# -----------------------------
-# Paths
-# -----------------------------
-BASE = Path("06_genome_quality_assessment")
-OUT = Path("11_plots/figures")
-OUT.mkdir(parents=True, exist_ok=True)
+# ======================================================
+# Resolve PROJECT directory robustly
+# ======================================================
+PROJECT_DIR = Path(__file__).resolve().parents[3] / "PROJECTS" / "paper_02"
+RESULTS = PROJECT_DIR / "results"
+OUTDIR = PROJECT_DIR / "figures"
+OUTDIR.mkdir(parents=True, exist_ok=True)
 
-# CheckM2
+# ======================================================
+# Input paths
+# ======================================================
 CHECKM = {
-    "Short": BASE / "checkm2/short_only/quality_report.tsv",
-    "Long": BASE / "checkm2/long_only/quality_report.tsv",
-    "Hybrid": BASE / "checkm2/hybrid/quality_report.tsv",
+    "Short": RESULTS / "quality/checkm2/short_only/quality_report.tsv",
+    "Long": RESULTS / "quality/checkm2/long_only/quality_report.tsv",
+    "Hybrid": RESULTS / "quality/checkm2/hybrid/quality_report.tsv",
 }
 
-# QUAST
 QUAST = {
-    "Short": BASE / "quast/short_only/report.tsv",
-    "Long": BASE / "quast/long_only/report.tsv",
-    "Hybrid": BASE / "quast/hybrid/report.tsv",
+    "Short": RESULTS / "quality/quast/01_short_only/transposed_report.tsv",
+    "Long": RESULTS / "quality/quast/02_long_only/transposed_report.tsv",
+    "Hybrid": RESULTS / "quality/quast/03_hybrid/transposed_report.tsv",
 }
 
-# Abricate (assembly level)
-ABRICATE = Path("09_abricate/assembly_level/abricate_assembly_summary.tsv")
-
-# -----------------------------
-# Load CheckM2
-# -----------------------------
+# ======================================================
+# Load CheckM2 metrics
+# ======================================================
 completeness = []
 contamination = []
 
 for asm, path in CHECKM.items():
-    df = pd.read_csv(path, sep="\t")
-    completeness.append(df.loc[0, "Completeness_General"])
-    contamination.append(df.loc[0, "Contamination"])
+    if not path.exists():
+        raise FileNotFoundError(f"Missing CheckM2 file: {path}")
 
-# -----------------------------
-# Load QUAST N50
-# -----------------------------
+    df = pd.read_csv(path, sep="\t")
+    completeness.append(float(df.loc[0, "Completeness_General"]))
+    contamination.append(float(df.loc[0, "Contamination"]))
+
+# ======================================================
+# Load QUAST N50 (kb) – robust
+# ======================================================
 n50 = []
+
 for asm, path in QUAST.items():
-    df = pd.read_csv(path, sep="\t")
-    row = df[df["Assembly"] == "N50"]
-    n50.append(float(row.iloc[0, 1]) / 1000)  # kb
+    if not path.exists():
+        raise FileNotFoundError(f"Missing QUAST file: {path}")
 
-# -----------------------------
-# Load Abricate (AMR count)
-# -----------------------------
-df_amr = pd.read_csv(ABRICATE, sep="\t")
-total_amr = df_amr["NUM_FOUND"].sum()
-amr_total = [0, 0, total_amr]
+    df = pd.read_csv(path, sep="\t", index_col=0)
 
+    # Case-insensitive N50 detection
+    n50_col = [c for c in df.columns if c.lower() == "n50"]
+    if not n50_col:
+        raise KeyError(f"N50 column not found in {path}")
 
-labels = ["Short", "Long", "Hybrid"]
+    n50.append(float(df[n50_col[0]].iloc[0]) / 1000)  # kb
+
+# ======================================================
+# Plot setup
+# ======================================================
+labels = ["Short-read", "Long-read", "Hybrid"]
 x = np.arange(len(labels))
-colors = ["#0072B2", "#D55E00", "#009E73"]  # color-blind safe
 
-# -----------------------------
-# Plot
-# -----------------------------
-fig, axes = plt.subplots(2, 2, figsize=(10, 7))
+colors = ["#0072B2", "#D55E00", "#009E73"]  # Okabe–Ito palette
 
-# Completeness
-axes[0, 0].bar(x, completeness, color=colors)
-axes[0, 0].set_title("Completeness (%)")
-axes[0, 0].set_ylim(0, 105)
+plt.style.use("seaborn-v0_8-whitegrid")
 
-# Contamination
-axes[0, 1].bar(x, contamination, color=colors)
-axes[0, 1].set_title("Contamination (%)")
+fig, axes = plt.subplots(1, 3, figsize=(12, 4))
 
-# N50
-axes[1, 0].bar(x, n50, color=colors)
-axes[1, 0].set_title("N50 (kb)")
+# ======================================================
+# Panel 1: Completeness
+# ======================================================
+axes[0].bar(x, completeness, color=colors, edgecolor="black")
+axes[0].set_title("Completeness (%)")
+axes[0].set_ylim(0, 105)
 
-# AMR genes
-axes[1, 1].bar(x, amr_total, color=colors)
-axes[1, 1].set_title("AMR genes (assembly-level)")
+# ======================================================
+# Panel 2: Contamination
+# ======================================================
+axes[1].bar(x, contamination, color=colors, edgecolor="black")
+axes[1].set_title("Contamination (%)")
 
-# -----------------------------
-# Formatting
-# -----------------------------
-for ax in axes.flat:
+# ======================================================
+# Panel 3: N50
+# ======================================================
+axes[2].bar(x, n50, color=colors, edgecolor="black")
+axes[2].set_title("N50 (kb)")
+
+# ======================================================
+# Shared formatting + value labels
+# ======================================================
+for ax in axes:
     ax.set_xticks(x)
-    ax.set_xticklabels(labels)
+    ax.set_xticklabels(labels, rotation=0)
+
     for bar in ax.patches:
         h = bar.get_height()
         ax.text(
             bar.get_x() + bar.get_width() / 2,
-            h + 0.02 * max(h, 1),
-            f"{h:.1f}" if h < 100 else f"{int(h)}",
+            h + max(h * 0.03, 0.5),
+            f"{h:.1f}",
             ha="center",
             fontsize=9
         )
 
+# ======================================================
+# Global title
+# ======================================================
 fig.suptitle(
-    "Figure 8. Integrated Comparison of Short-read, Long-read and Hybrid Assemblies",
-    fontsize=14
+    "Figure 8. Integrated comparison of short-read, long-read and hybrid assemblies",
+    fontsize=13,
+    y=1.05
 )
 
 plt.tight_layout()
-plt.savefig(OUT / "Figure8_Overall_Assembly_Summary.png", dpi=300)
-plt.show()
+
+# ======================================================
+# Save
+# ======================================================
+out = OUTDIR / "Figure8_Overall_Assembly_Quality.png"
+plt.savefig(out, dpi=300, bbox_inches="tight")
+plt.close()
+
+print("✅ Figure 8 generated successfully")
+print(f"📁 Output: {out}")

@@ -1,70 +1,116 @@
+#!/usr/bin/env python3
+
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+import os
+import sys
 
-# --------------------------------------------------
-# Project root (robust)
-# --------------------------------------------------
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-COVERAGE = PROJECT_ROOT / "06_genome_quality_assessment" / "coverage"
+# ======================================================
+# ENV CHECK (ONLY RESULTS_DIR & FIGURES_DIR)
+# ======================================================
+if "RESULTS_DIR" not in os.environ or "FIGURES_DIR" not in os.environ:
+    sys.exit("❌ RESULTS_DIR or FIGURES_DIR not set. Use run_plots.sh")
 
-# --------------------------------------------------
-# Coverage folders
-# --------------------------------------------------
+RESULTS = Path(os.environ["RESULTS_DIR"])
+OUTDIR  = Path(os.environ["FIGURES_DIR"])
+OUTDIR.mkdir(parents=True, exist_ok=True)
+
+COVERAGE = RESULTS / "quality" / "coverage"
+
+# ======================================================
+# Coverage folders (CONFIRMED STRUCTURE)
+# ======================================================
 folders = {
-    "Short vs Short": COVERAGE / "short_reads" / "short_vs_short",
-    "Short vs Hybrid": COVERAGE / "short_reads" / "short_vs_hybrid",
-    "Long vs Hybrid": COVERAGE / "long_reads" / "long_vs_hybrid",
+    "Short → Short":  COVERAGE / "short_reads" / "short_vs_short",
+    "Short → Hybrid": COVERAGE / "short_reads" / "short_vs_hybrid",
+    "Long → Hybrid":  COVERAGE / "long_reads" / "long_vs_hybrid",
+}
+
+# Okabe–Ito color-blind friendly palette
+COLORS = {
+    "Short → Short":  "#E69F00",
+    "Short → Hybrid": "#0072B2",
+    "Long → Hybrid":  "#009E73",
 }
 
 depth_data = {}
 
-# --------------------------------------------------
-# Auto-detect depth file
-# --------------------------------------------------
+# ======================================================
+# Load depth files
+# ======================================================
 for label, folder in folders.items():
     if not folder.exists():
-        raise FileNotFoundError(f"Folder missing: {folder}")
+        sys.exit(f"❌ Missing folder: {folder}")
 
-    candidates = list(folder.glob("*depth*.txt")) + list(folder.glob("*depth*.tsv"))
+    files = list(folder.glob("*depth*.txt")) + list(folder.glob("*depth*.tsv"))
+    if not files:
+        sys.exit(f"❌ No depth file found in {folder}")
 
-    if not candidates:
-        print(f"\nDEBUG: files in {folder}")
-        for f in folder.iterdir():
-            print(" -", f.name)
-        raise FileNotFoundError(f"No depth file found in {folder}")
-
-    depth_file = candidates[0]
-
-    df = pd.read_csv(depth_file, sep="\t", header=None)
-    df.columns = ["contig", "position", "depth"]
-    depth_data[label] = df["depth"]
-
-# --------------------------------------------------
-# Plot
-# --------------------------------------------------
-plt.figure(figsize=(10, 6))
-
-for label, depths in depth_data.items():
-    plt.hist(
-        depths,
-        bins=120,
-        density=True,
-        alpha=0.6,
-        label=label
+    df = pd.read_csv(
+        files[0],
+        sep="\t",
+        header=None,
+        names=["contig", "pos", "depth"]
     )
 
-plt.xlabel("Coverage depth")
-plt.ylabel("Density")
-plt.title("Figure 5. Coverage Depth Distribution Comparison")
-plt.legend(frameon=False)
+    depth_data[label] = df["depth"]
+
+# ======================================================
+# Plot
+# ======================================================
+plt.style.use("seaborn-v0_8-whitegrid")
+fig, ax = plt.subplots(figsize=(9, 5))
+
+for label, depths in depth_data.items():
+    depths = depths[depths > 0]
+
+    ax.hist(
+        depths,
+        bins=200,
+        density=True,
+        alpha=0.45,
+        color=COLORS[label],
+        label=f"{label} (mean={depths.mean():.1f}×)"
+    )
+
+    ax.axvline(
+        depths.mean(),
+        color=COLORS[label],
+        linestyle="--",
+        linewidth=2
+    )
+
+# ======================================================
+# Formatting
+# ======================================================
+ax.set_xscale("log")
+ax.set_xlabel("Coverage depth (log scale)", fontsize=12)
+ax.set_ylabel("Density", fontsize=12)
+
+ax.set_title(
+    "Figure 5. Coverage Depth Distribution Across Assemblies\n"
+    "Hybrid assembly shows more uniform and stable coverage",
+    fontsize=13
+)
+
+ax.legend(
+    title="Mapping strategy",
+    bbox_to_anchor=(1.02, 1),
+    loc="upper left",
+    frameon=True
+)
+
+ax.grid(axis="y", linestyle="--", alpha=0.4)
 plt.tight_layout()
 
-# --------------------------------------------------
+# ======================================================
 # Save
-# --------------------------------------------------
-outdir = PROJECT_ROOT / "11_plots" / "figures"
-outdir.mkdir(parents=True, exist_ok=True)
+# ======================================================
+outfile = OUTDIR / "Figure5_Coverage_Depth_Distribution.png"
+plt.savefig(outfile, dpi=300)
+plt.close()
 
-plt.savefig(outdir / "Figure5_Coverage_Depth_Distribution.png", dpi=300)
-plt.show()
+print("✅ Coverage depth comparison plot generated")
+print(f"📁 Output: {outfile}")
