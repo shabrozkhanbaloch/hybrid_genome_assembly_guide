@@ -12,25 +12,28 @@ if [ -z "$PROJECT_DIR" ]; then
 fi
 
 RESULTS="$PROJECT_DIR/results"
+FIGURES="$PROJECT_DIR/figures"
 
 echo "=============================================="
-echo " Project cleanup (QC → Genomad)"
+echo " Project cleanup (SAFE MODE)"
 echo " Target: $PROJECT_DIR"
 echo "=============================================="
 
 # -------------------------------------------------
-# QC outputs
+# QC outputs (raw reports only)
 # -------------------------------------------------
 rm -rf "$RESULTS/qc_before"/*
 rm -rf "$RESULTS/qc_after"/*
 
 # -------------------------------------------------
-# Genome assembly (KEEP FASTA ONLY)
+# Genome assembly
+# KEEP: assembly.fasta
 # -------------------------------------------------
 find "$RESULTS/assembly" -type f ! -name "assembly.fasta" -delete
 
 # -------------------------------------------------
 # Genome quality assessment
+# KEEP: summary TSVs if any
 # -------------------------------------------------
 rm -rf "$RESULTS/quality/checkm2"
 rm -rf "$RESULTS/quality/quast"
@@ -39,27 +42,42 @@ rm -rf "$RESULTS/quality/coverage"
 
 # -------------------------------------------------
 # Genome annotation
+# KEEP: GFF + summary TSVs
 # -------------------------------------------------
-rm -rf "$RESULTS/annotation/prokka"/*
-rm -rf "$RESULTS/annotation/bakta"/*
+find "$RESULTS/annotation/prokka" -type f \
+  ! -name "*.gff" \
+  ! -name "*.tsv" \
+  -delete
+
+find "$RESULTS/annotation/bakta" -type f \
+  ! -name "*.gff" \
+  ! -name "*.tsv" \
+  -delete
 
 # -------------------------------------------------
-# Plassembler (KEEP SUMMARY + logs)
+# Plassembler
+# KEEP: summaries + logs
 # -------------------------------------------------
 find "$RESULTS/plasmids" -type f \
-  ! -name "plassembler_summary.tsv" \
+  ! -name "*summary*.tsv" \
   ! -name "*.log" \
   -delete
 
 # -------------------------------------------------
 # Abricate
+# KEEP: summary TSVs
 # -------------------------------------------------
-rm -rf "$RESULTS/amr"/*
+find "$RESULTS/amr" -type f \
+  ! -name "*summary*.tsv" \
+  -delete
 
 # -------------------------------------------------
 # geNomad
+# KEEP: summary folders only
 # -------------------------------------------------
-rm -rf "$RESULTS/prophage"/*
+find "$RESULTS/prophage" -type f \
+  ! -name "*summary*" \
+  -delete
 
 # -------------------------------------------------
 # Generic heavy junk
@@ -69,10 +87,14 @@ find "$RESULTS" -type f \( \
   -name "*.bai" -o \
   -name "*.depth*" -o \
   -name "*.paf" -o \
-  -name "*.html" \
+  -name "*.html" -o \
+  -name "*.json" \
 \) -delete
 
 echo "----------------------------------------------"
-echo " Cleanup complete for:"
-echo "  $PROJECT_DIR"
+echo " Cleanup complete (SAFE)"
+echo " Results kept:"
+echo "  - assembly.fasta"
+echo "  - summary TSVs"
+echo "  - figures/"
 echo "----------------------------------------------"

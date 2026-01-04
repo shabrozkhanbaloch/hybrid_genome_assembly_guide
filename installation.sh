@@ -256,8 +256,13 @@ tar xvzf /data/databases_important/ext_ssd/gtdbtk_r226_data/gtdbtk_r226_data.tar
     --smoothing=0.1 >/dev/null
 
 # setting GTDBTK_DATA_PATH environment variable using conda env config vars
-conda env config vars set GTDBTK_DATA_PATH="/data/databases_important/ext_ssd/gtdbtk_r226_data/gtdbtk_r226_data"
-conda deactivate
+export GTDBTK_DATA_PATH=/data/databases_important/ext_ssd/gtdbtk_r226_data/release226
+sed -i 's|GTDBTK_DATA_PATH=.*|GTDBTK_DATA_PATH=/data/databases_important/ext_ssd/gtdbtk_r226_data/release226|' ~/.bashrc
+source ~/.bashrc
+
+
+#conda env config vars set GTDBTK_DATA_PATH="/data/databases_important/ext_ssd/gtdbtk_r226_data/gtdbtk_r226_data"
+#conda deactivate
 conda activate gtdbtk-2.6.1
 # test run
 gtdbtk --help
