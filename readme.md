@@ -21,53 +21,81 @@ The pipeline covers:
 
 ---
 
-## Directory Structure
-
-Script:
-`00_make_directories.sh`
 
 
-```text
-hybrid_genome_assembly_guide/
-├── 00_papers/                     # Reference papers
-├── 01_raw_reads/
-│   ├── short_reads/
-│   └── long_reads/
-├── 02_qc_before_processing/
-├── 03_processed_reads/
-├── 04_qc_after_processing/
-├── 05_genome_assembly/
-│   ├── 01_short_only/
-│   ├── 02_long_only/
-│   └── 03_hybrid/
-├── 06_genome_quality_assessment/
-│   ├── checkm2/
-│   ├── quast/
-│   └── busco/
-├── 07_genome_annotation/
-│   ├── prokka/
-│   └── bakta/
-├── 08_plassembler/
-├── 09_abricate/
-│   ├── assembly_level/
-│   └── plasmid_level/
-├── 10_genomad/
-│   ├── assembly_level/
-│   └── plasmidid_level/
-├── installation.sh
-└── README.md
+## 🔑 Core Design Principle (IMPORTANT)
+
+The pipeline NEVER owns raw sequencing data.
+Raw data lives in a central sequencing data directory and is linked to each project using symlinks.
+
+### This makes the pipeline:
+
+reusable across multiple projects
+
+safe to clean/reset
+
+GitHub-friendly
+
+## Sequencing Data Layout (External to Pipeline)
+Raw sequencing data is stored outside the pipeline repository, for example:
+```
+/data/sequencing_data/
+└── project_02/
+    ├── short_reads_clean/
+    │   ├── ERR4824536_1.fastq.gz
+    │   └── ERR4824536_2.fastq.gz
+    └── long_reads/
+        └── ERR4824536_long.fastq.gz
+```
+This directory is never deleted or modified by the pipeline
+## Per-Project Directory Structure
+
+### Created using:
+00_make_directories.sh
+- This directory is never deleted or modified by the pipeline
+```
+PROJECTS/paper_02/
+├── data/
+│   ├── short_reads -> /data/sequencing_data/project_02/short_reads_clean
+│   └── long_reads  -> /data/sequencing_data/project_02/long_reads
+├── results/
+│   ├── qc_before/
+│   ├── processed_reads/
+│   ├── qc_after/
+│   ├── assembly/
+│   │   ├── 01_short_only/
+│   │   ├── 02_long_only/
+│   │   └── 03_hybrid/
+│   ├── quality/
+│   │   ├── checkm2/
+│   │   ├── quast/
+│   │   └── busco/
+│   ├── annotation/
+│   │   ├── prokka/
+│   │   └── bakta/
+│   ├── plasmids/
+│   ├── amr/
+│   │   ├── assembly_level/
+│   │   └── plasmid_level/
+│   └── prophage/
+│       ├── assembly_level/
+│       └── plasmid_level/
+└── figures/
+
 
 ```
 ---
 
 
 
-# Pipeline Workflow
+### 🔬 Pipeline Workflow
+Step 1 – Raw Read Validation
 
-### 1. Raw Read Setup
-- Validates exactly **one Illumina paired-end sample**
-- Validates **one Nanopore long-read FASTQ**
-- Standardizes file naming
+Confirms exactly one Illumina paired-end sample
+
+Confirms exactly one Oxford Nanopore long-read FASTQ
+
+READ-ONLY check (no files are modified)
 
 Script:
 `01_setup_raw_reads.sh`
@@ -135,10 +163,6 @@ short- and long-read data.
 Script:
 `07_plassembler.sh`
 
-
-
-## Key output:
-
 ---
 
 ### Step 8 – Antimicrobial Resistance Detection
@@ -181,7 +205,8 @@ Script:
 All steps can be executed automatically using:
 
 Script:
-`./run_pipeline.sh`
+`bash run_pipeline.sh /path/to/PROJECT_DIR`
+
 
 
 The pipeline stops immediately if any step fails.
@@ -230,7 +255,6 @@ Typical runtime (bacterial genome):
 (depending on read depth and long-read size)
 
 
-
 ## Intended Use
 
 - Bacterial WGS analysis
@@ -259,6 +283,96 @@ The following Conda environments are created:
 All required reference databases (CheckM2, BUSCO, Bakta, Plassembler, geNomad) are downloaded automatically.
 
 ---
+# 🚀 Quick Start (5-Minute Setup)
+
+Follow these steps to run the complete hybrid genome assembly pipeline from raw FASTQ files to publication-ready results.
+
+## Step 1 – Clone the Repository
+git clone https://github.com/<your-org>/hybrid_genome_assembly_guide.git
+cd hybrid_genome_assembly_guide
+
+## Step 2 – Prepare Sequencing Data (Outside the Pipeline)
+
+Raw sequencing data must exist outside the pipeline repository.
+
+### Example layout:
+```
+/data/sequencing_data/project_02/
+├── short_reads_clean/
+│   ├── SAMPLE_1.fastq.gz
+│   └── SAMPLE_2.fastq.gz
+└── long_reads/
+    └── SAMPLE_long.fastq.gz
+
+```
+## 📌 Important
+
+One Illumina paired-end sample per project
+
+One Nanopore long-read FASTQ per project
+
+Files must be compressed (.fastq.gz)
+
+## Step 3 – Create a New Project
+`mkdir -p /data/wgs_assembly/PROJECTS/paper_02
+bash 00_make_directories.sh /data/wgs_assembly/PROJECTS/paper_02`
+
+## Step 4 – Link Sequencing Data (Using Symlinks)
+`ln -s /data/sequencing_data/project_02/short_reads_clean \
+      /data/wgs_assembly/PROJECTS/paper_02/data/short_reads`
+
+`ln -s /data/sequencing_data/project_02/long_reads \
+      /data/wgs_assembly/PROJECTS/paper_02/data/long_reads`
+
+
+## 🔒 Why symlinks?
+
+Raw data is never copied or modified
+
+Multiple projects can reuse the same sequencing data
+
+Safe cleanup and reproducibility
+
+## Step 5 – Preflight Check (REQUIRED)
+`bash preflight_check.sh /data/wgs_assembly/PROJECTS/paper_02`
+
+
+## Expected output:
+
+✅ PRE-FLIGHT CHECK PASSED
+🚀 Safe to run pipeline
+
+## Step 6 – Run the Complete Pipeline
+`bash run_pipeline.sh /data/wgs_assembly/PROJECTS/paper_02`
+
+
+## The pipeline:
+
+Executes all steps sequentially
+
+Stops immediately if an error occurs
+
+Produces fully reproducible results
+
+## Optional – Cleanup & Re-Run
+
+To remove heavy intermediate files while keeping final outputs:
+
+`bash cleanup_project.sh /data/wgs_assembly/PROJECTS/paper_02`
+
+⚠️ Important Rules
+
+❌ Never copy FASTQ files into the pipeline repository
+
+✅ Always use symlinks for raw sequencing data
+
+✅ Results can be safely deleted and regenerated
+
+⚠️ One sample per project directory (by design)
+
+🎯 Done.
+
+From raw FASTQ files to publication-ready assemblies in a single command.
 
 ## Acknowledgements
 
