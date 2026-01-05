@@ -288,8 +288,7 @@ All required reference databases (CheckM2, BUSCO, Bakta, Plassembler, geNomad) a
 Follow these steps to run the complete hybrid genome assembly pipeline from raw FASTQ files to publication-ready results.
 
 ## Step 1 – Clone the Repository
-git clone https://github.com/<your-org>/hybrid_genome_assembly_guide.git
-cd hybrid_genome_assembly_guide
+https://github.com/shabrozkhanbaloch/hybrid_genome_assembly_guide.git
 
 ## Step 2 – Prepare Sequencing Data (Outside the Pipeline)
 
@@ -437,7 +436,7 @@ All plots can be generated or regenerated using single commands, without any man
 
 To generate all plots at once from existing pipeline results:
 
-`bash run_plots_and_summary.sh /path/to/PROJECT_DIR`
+`bash run_plots.sh /path/to/PROJECT_DIR`
 
 
 This script:
@@ -477,7 +476,7 @@ is safe to run multiple times
 To fully regenerate plots from scratch:
 
 `bash cleanup_plots.sh /path/to/PROJECT_DIR`
-`bash run_plots_and_summary.sh /path/to/PROJECT_DIR`
+`bash run_plots.sh /path/to/PROJECT_DIR`
 
 🔐 Safety Guarantees
 

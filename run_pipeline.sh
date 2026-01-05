@@ -56,35 +56,73 @@ echo "[4/8] Genome assembly..."
 bash "$SCRIPTS_DIR/04_genome_assembly.sh" \
   "$RESULTS_DIR"
 
-# ===============================
-# [5/8] QC after assembly
-# ===============================
-echo "[5/8] QC after assembly..."
-bash "$SCRIPTS_DIR/05_qc_after_assembly.sh" \
-  "$RESULTS_DIR"
+# -------------------------------------------------
+# Step 5 – Genome quality
+# -------------------------------------------------
+if [[ ! -d "$RESULTS_DIR/quality/checkm2" ]]; then
+  echo "[5/8] Genome quality assessment..."
+  bash "$SCRIPTS_DIR/05_genome_quality_assessment.sh" "$RESULTS_DIR"
+else
+  echo "[5/8] Quality assessment already done — skipping"
+fi
 
-# ===============================
-# [6/8] Genome annotation
-# ===============================
-echo "[6/8] Genome annotation..."
-bash "$SCRIPTS_DIR/06_genome_annotation.sh" \
-  "$RESULTS_DIR"
+# -------------------------------------------------
+# Step 5a – Coverage
+# -------------------------------------------------
+if [[ ! -d "$RESULTS_DIR/quality/coverage" ]]; then
+  echo "[5a] Coverage analysis..."
+  bash "$SCRIPTS_DIR/05a_coverage_analysis.sh" "$RESULTS_DIR"
+else
+  echo "[5a] Coverage already done — skipping"
+fi
 
-# ===============================
-# [7/8] AMR / mobile elements
-# ===============================
-echo "[7/8] AMR & mobile element analysis..."
-bash "$SCRIPTS_DIR/07_amr_mobile_elements.sh" \
-  "$RESULTS_DIR"
+# -------------------------------------------------
+# Step 6 – Annotation
+# -------------------------------------------------
+if [[ ! -d "$RESULTS_DIR/annotation" ]]; then
+  echo "[6/8] Genome annotation..."
+  bash "$SCRIPTS_DIR/06_genome_annotation.sh" "$RESULTS_DIR"
+else
+  echo "[6/8] Annotation already exists — skipping"
+fi
 
-# ===============================
-# [8/8] Plots & summary
-# ===============================
-echo "[8/8] Generating plots & summaries..."
-bash "$SCRIPTS_DIR/08_plots_and_summary.sh" \
-  "$RESULTS_DIR"
+# -------------------------------------------------
+# [7] Plasmid reconstruction (Plassembler)
+# -------------------------------------------------
+if [[ ! -d "$RESULTS_DIR/plasmids" ]]; then
+  echo "[7/9] Plasmid reconstruction (Plassembler)..."
+  bash "$SCRIPTS_DIR/07_plassembler.sh" "$RESULTS_DIR"
+else
+  echo "[7/9] Plasmids already reconstructed — skipping"
+fi
+
+# -------------------------------------------------
+# [8] AMR detection (Abricate)
+# -------------------------------------------------
+if [[ ! -d "$RESULTS_DIR/amr" ]]; then
+  echo "[8/9] AMR detection (Abricate)..."
+  bash "$SCRIPTS_DIR/08_abricate.sh" "$PROJECT_DIR"
+else
+  echo "[8/9] AMR analysis already done — skipping"
+fi
+
+# -------------------------------------------------
+# [9] Prophage / virus detection (geNomad)
+# -------------------------------------------------
+if [[ ! -d "$RESULTS_DIR/prophage" ]]; then
+  echo "[9/9] Prophage & virus detection (geNomad)..."
+  bash "$SCRIPTS_DIR/09_genomad.sh" "$RESULTS_DIR"
+else
+  echo "[9/9] geNomad already done — skipping"
+fi
+
+# -------------------------------------------------
+# [10] Plots & summaries
+# -------------------------------------------------
+echo "[10] Generating plots & summaries..."
+bash "$SCRIPTS_DIR/run_plots.sh" "$RESULTS_DIR"
 
 echo "=========================================="
-echo " Pipeline COMPLETED successfully"
+echo " Pipeline COMPLETED (FULL & RESUME-SAFE)"
 echo " Results: $RESULTS_DIR"
 echo "=========================================="

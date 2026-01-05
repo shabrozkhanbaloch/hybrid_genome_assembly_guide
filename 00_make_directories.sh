@@ -52,10 +52,11 @@ mkdir -p \
 # Genome quality assessment
 # ===============================
 mkdir -p \
-  "$BASE/quality/checkm2"/{01_short_only,02_long_only,03_hybrid} \
+  "$BASE/quality/checkm2"/{short_only,long_only,hybrid} \
   "$BASE/quality/quast"/{01_short_only,02_long_only,03_hybrid} \
-  "$BASE/quality/busco"/{01_short_only,02_long_only,03_hybrid} \
+  "$BASE/quality/busco" \
   "$BASE/quality/coverage"
+
 
 # ===============================
 # Genome annotation
