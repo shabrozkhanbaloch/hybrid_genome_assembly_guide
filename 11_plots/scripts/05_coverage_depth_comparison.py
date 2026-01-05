@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,13 +9,34 @@ import os
 import sys
 
 # ======================================================
-# ENV CHECK (ONLY RESULTS_DIR & FIGURES_DIR)
+# ARGUMENT PARSING (CLI > ENV)
 # ======================================================
-if "RESULTS_DIR" not in os.environ or "FIGURES_DIR" not in os.environ:
-    sys.exit("❌ RESULTS_DIR or FIGURES_DIR not set. Use run_plots.sh")
+parser = argparse.ArgumentParser(
+    description="Coverage depth distribution comparison"
+)
 
-RESULTS = Path(os.environ["RESULTS_DIR"])
-OUTDIR  = Path(os.environ["FIGURES_DIR"])
+parser.add_argument(
+    "--results",
+    help="Path to RESULTS directory"
+)
+
+parser.add_argument(
+    "--figures",
+    help="Path to FIGURES directory"
+)
+
+args = parser.parse_args()
+
+RESULTS_DIR = args.results or os.environ.get("RESULTS_DIR")
+FIGURES_DIR = args.figures or os.environ.get("FIGURES_DIR")
+
+if not RESULTS_DIR or not FIGURES_DIR:
+    sys.exit(
+        "❌ RESULTS_DIR and FIGURES_DIR must be provided via CLI or environment"
+    )
+
+RESULTS = Path(RESULTS_DIR)
+OUTDIR  = Path(FIGURES_DIR)
 OUTDIR.mkdir(parents=True, exist_ok=True)
 
 COVERAGE = RESULTS / "quality" / "coverage"
@@ -90,7 +112,7 @@ ax.set_xlabel("Coverage depth (log scale)", fontsize=12)
 ax.set_ylabel("Density", fontsize=12)
 
 ax.set_title(
-    "Figure 5. Coverage Depth Distribution Across Assemblies\n"
+    "Coverage Depth Distribution Across Assemblies\n"
     "Hybrid assembly shows more uniform and stable coverage",
     fontsize=13
 )

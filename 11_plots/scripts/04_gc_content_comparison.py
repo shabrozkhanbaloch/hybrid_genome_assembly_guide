@@ -1,25 +1,47 @@
 #!/usr/bin/env python3
 
+import argparse
+import os
+import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 from Bio import SeqIO
 from pathlib import Path
 import numpy as np
-import os
-import sys
 
 # ======================================================
-# ENV CHECK
+# ARGUMENT PARSING (CLI > ENV)
 # ======================================================
-if "RESULTS_DIR" not in os.environ or "FIGURES_DIR" not in os.environ:
-    sys.exit("❌ RESULTS_DIR or FIGURES_DIR not set. Use run_plots.sh")
+parser = argparse.ArgumentParser(
+    description="GC content distribution comparison across assemblies"
+)
 
-RESULTS = Path(os.environ["RESULTS_DIR"])
-FIGDIR  = Path(os.environ["FIGURES_DIR"])
+parser.add_argument(
+    "--results",
+    help="Path to RESULTS directory"
+)
+
+parser.add_argument(
+    "--figures",
+    help="Path to FIGURES directory"
+)
+
+args = parser.parse_args()
+
+RESULTS_DIR = args.results or os.environ.get("RESULTS_DIR")
+FIGURES_DIR = args.figures or os.environ.get("FIGURES_DIR")
+
+if not RESULTS_DIR or not FIGURES_DIR:
+    sys.exit(
+        "❌ RESULTS_DIR and FIGURES_DIR must be provided via CLI or environment"
+    )
+
+RESULTS = Path(RESULTS_DIR)
+FIGDIR  = Path(FIGURES_DIR)
 FIGDIR.mkdir(parents=True, exist_ok=True)
 
 # ======================================================
-# ASSEMBLY FASTA PATHS (RESULTS-BASED)
+# ASSEMBLY FASTA PATHS
 # ======================================================
 assemblies = {
     "Short-read": RESULTS / "assembly/01_short_only/assembly.fasta",
@@ -64,7 +86,7 @@ for label, fasta in assemblies.items():
 df = pd.DataFrame(data)
 
 # ======================================================
-# ORDER (IMPORTANT FOR STORY)
+# ORDER (STORY CONSISTENCY)
 # ======================================================
 order = ["Short-read", "Long-read", "Hybrid"]
 groups = df.groupby("Assembly")["GC"]
@@ -78,7 +100,7 @@ positions = np.arange(len(order)) + 1
 plt.style.use("seaborn-v0_8-whitegrid")
 fig, ax = plt.subplots(figsize=(8, 5))
 
-# ---- violin
+# ---- violin plot
 violins = ax.violinplot(
     data_ordered,
     positions=positions,
@@ -93,7 +115,7 @@ for body, label in zip(violins["bodies"], order):
     body.set_edgecolor("black")
     body.set_alpha(0.9)
 
-# ---- boxplot inside
+# ---- boxplot overlay
 ax.boxplot(
     data_ordered,
     positions=positions,
@@ -105,7 +127,7 @@ ax.boxplot(
     capprops=dict(color="black")
 )
 
-# ---- mean points + labels
+# ---- mean points
 for i, label in enumerate(order, start=1):
     mean_gc = data_ordered[i-1].mean()
     ax.scatter(i, mean_gc, color="black", s=50, zorder=5)
@@ -120,7 +142,7 @@ for i, label in enumerate(order, start=1):
     )
 
 # ======================================================
-# FORMATTING (NATURE STYLE)
+# FORMATTING
 # ======================================================
 ax.set_xticks(positions)
 ax.set_xticklabels(order, fontsize=11)
@@ -128,7 +150,7 @@ ax.set_ylabel("GC content (%)", fontsize=12)
 ax.set_ylim(30, 55)
 
 ax.set_title(
-    "Figure 4. GC Content Distribution Across Assemblies\n"
+    "GC Content Distribution Across Assemblies\n"
     "Hybrid assembly shows reduced GC bias and tighter distribution",
     fontsize=13
 )

@@ -1,21 +1,38 @@
 #!/usr/bin/env python3
 
+import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
+import os
+import sys
 
 # ======================================================
-# Project paths (robust)
+# ARGUMENTS (CLI > ENV)
 # ======================================================
-PROJECT_DIR = Path("/data/wgs_assembly/PROJECTS/paper_02")
-RESULTS = PROJECT_DIR / "results"
-OUTDIR = PROJECT_DIR / "figures"
+parser = argparse.ArgumentParser(
+    description="geNomad viral & plasmid contig classification summary"
+)
+
+parser.add_argument("--results", help="RESULTS directory")
+parser.add_argument("--figures", help="FIGURES directory")
+
+args = parser.parse_args()
+
+RESULTS_DIR = args.results or os.environ.get("RESULTS_DIR")
+FIGURES_DIR = args.figures or os.environ.get("FIGURES_DIR")
+
+if not RESULTS_DIR or not FIGURES_DIR:
+    sys.exit("❌ RESULTS_DIR and FIGURES_DIR must be provided via CLI or ENV")
+
+RESULTS = Path(RESULTS_DIR)
+OUTDIR  = Path(FIGURES_DIR)
 OUTDIR.mkdir(parents=True, exist_ok=True)
 
 GENOMAD = RESULTS / "prophage"
 
 # ======================================================
-# Correct geNomad summary files (REAL ones)
+# geNomad summary files (CONFIRMED STRUCTURE)
 # ======================================================
 ASM_VIRUS = GENOMAD / "assembly_level/assembly_summary/assembly_virus_summary.tsv"
 ASM_PLASMID = GENOMAD / "assembly_level/assembly_summary/assembly_plasmid_summary.tsv"
@@ -26,7 +43,7 @@ PLS_PLASMID = GENOMAD / "plasmid_level/plassembler_plasmids_summary/plassembler_
 files = [ASM_VIRUS, ASM_PLASMID, PLS_VIRUS, PLS_PLASMID]
 for f in files:
     if not f.exists():
-        raise FileNotFoundError(f"Missing geNomad file: {f}")
+        sys.exit(f"❌ Missing geNomad file: {f}")
 
 # ======================================================
 # Count contigs
@@ -114,9 +131,12 @@ fig.suptitle(
 
 plt.tight_layout()
 
-out = OUTDIR / "Figure7_geNomad_Classification.png"
-plt.savefig(out, dpi=300, bbox_inches="tight")
+# ======================================================
+# Save
+# ======================================================
+outfile = OUTDIR / "Figure7_geNomad_Classification.png"
+plt.savefig(outfile, dpi=300, bbox_inches="tight")
 plt.close()
 
-print("✅ Figure 7 generated successfully")
-print(f"📁 Output: {out}")
+print("✅ geNomad classification plot generated")
+print(f"📁 Output: {outfile}")

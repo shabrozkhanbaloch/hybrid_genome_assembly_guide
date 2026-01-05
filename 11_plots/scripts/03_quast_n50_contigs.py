@@ -1,20 +1,42 @@
 #!/usr/bin/env python3
 
 import os
+import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
 # ======================================================
-# Environment variables
+# Argument parsing (CLI > ENV)
 # ======================================================
-RESULTS_DIR = os.environ.get("RESULTS_DIR")
-FIGURES_DIR = os.environ.get("FIGURES_DIR")
+parser = argparse.ArgumentParser(
+    description="QUAST N50 & contig count comparison plot"
+)
+
+parser.add_argument(
+    "--results",
+    help="Path to RESULTS directory"
+)
+
+parser.add_argument(
+    "--figures",
+    help="Path to FIGURES directory"
+)
+
+args = parser.parse_args()
+
+RESULTS_DIR = args.results or os.environ.get("RESULTS_DIR")
+FIGURES_DIR = args.figures or os.environ.get("FIGURES_DIR")
 
 if not RESULTS_DIR or not FIGURES_DIR:
-    raise RuntimeError("RESULTS_DIR and FIGURES_DIR must be set")
+    raise RuntimeError(
+        "RESULTS_DIR and FIGURES_DIR must be provided via CLI or environment"
+    )
 
+# ======================================================
+# Paths
+# ======================================================
 BASE = Path(RESULTS_DIR) / "quality" / "quast"
 OUT  = Path(FIGURES_DIR)
 OUT.mkdir(parents=True, exist_ok=True)
@@ -30,7 +52,7 @@ n50 = []
 contigs = []
 
 # ======================================================
-# Load QUAST data (NO GUESSING)
+# Load QUAST data
 # ======================================================
 for label, folder in assemblies.items():
 
@@ -38,17 +60,13 @@ for label, folder in assemblies.items():
     normal     = folder / "report.tsv"
 
     if transposed.exists():
-        print(f"[INFO] Using QUAST report: {transposed}")
         df = pd.read_csv(transposed, sep="\t")
-
-        # first column is assembly name
         df = df.set_index(df.columns[0])
 
         n50_val = df.iloc[0]["N50"]
         contig_val = df.iloc[0]["# contigs"]
 
     elif normal.exists():
-        print(f"[INFO] Using QUAST report: {normal}")
         df = pd.read_csv(normal, sep="\t").set_index("Assembly")
 
         n50_val = df.loc["N50"].values[0]
@@ -134,6 +152,7 @@ ax1.legend(
 )
 
 plt.tight_layout()
+
 outfile = OUT / "Figure3_QUAST_N50_Contigs.png"
 plt.savefig(outfile, dpi=300)
 plt.close()
