@@ -1,93 +1,91 @@
 #!/bin/bash
 set -euo pipefail
 
+eval "$(conda shell.bash hook)"
+
 # ===============================
 # INPUT ARGUMENT
 # ===============================
-PROJECT_DIR=$1
+PROJECT_DIR=${1:-}
 
-if [ -z "$PROJECT_DIR" ]; then
-  echo "Usage: ./run_pipeline.sh /full/path/to/PROJECT_DIR"
+if [[ -z "$PROJECT_DIR" ]]; then
+  echo "Usage: run_pipeline.sh <PROJECT_DIR>"
   exit 1
 fi
 
 # ===============================
-# PIPELINE BASE (CODE ONLY)
+# DIRECTORY STRUCTURE
 # ===============================
-PIPELINE_BASE="/data/wgs_assembly/hybrid_genome_assembly_guide"
+DATA_DIR="$PROJECT_DIR/data"
+RAW_READS="$DATA_DIR/raw_reads"
+RESULTS_DIR="$PROJECT_DIR/results"
+SCRIPTS_DIR="$(dirname "$0")"
 
-# ===============================
-# PROJECT PATHS
-# ===============================
-RAW="$PROJECT_DIR/data"
-RESULTS="$PROJECT_DIR/results"
-FIGURES="$PROJECT_DIR/figures"
+mkdir -p "$RESULTS_DIR"
 
 echo "=========================================="
 echo " Hybrid Genome Assembly Pipeline STARTED"
 echo " Project: $PROJECT_DIR"
 echo "=========================================="
 
-########################################
-# 1. Setup raw reads
-########################################
+# ===============================
+# [1/8] Setup raw reads
+# ===============================
 echo "[1/8] Setting up raw reads..."
-bash "$PIPELINE_BASE/01_setup_raw_reads.sh" "$RAW"
+bash "$SCRIPTS_DIR/01_setup_raw_reads.sh" "$DATA_DIR"
 
-########################################
-# 2. QC before processing
-########################################
+# ===============================
+# [2/8] QC before processing
+# ===============================
 echo "[2/8] QC before processing..."
-bash "$PIPELINE_BASE/02_qc_reads_before_processing.sh" "$RAW" "$RESULTS"
+bash "$SCRIPTS_DIR/02_qc_reads_before_processing.sh" \
+  "$RAW_READS" \
+  "$RESULTS_DIR"
 
-########################################
-# 3. Read processing
-########################################
+# ===============================
+# [3/8] Read processing
+# ===============================
 echo "[3/8] Processing reads..."
-bash "$PIPELINE_BASE/03_process_reads.sh" "$RAW" "$RESULTS"
+bash "$SCRIPTS_DIR/03_process_reads.sh" \
+  "$RAW_READS" \
+  "$RESULTS_DIR"
 
-########################################
-# 4. Genome assembly
-########################################
-echo "[4/8] Genome assembly (short / long / hybrid)..."
-bash "$PIPELINE_BASE/04_genome_assembly.sh" "$RESULTS"
+# ===============================
+# [4/8] Genome assembly
+# ===============================
+echo "[4/8] Genome assembly..."
+bash "$SCRIPTS_DIR/04_genome_assembly.sh" \
+  "$RESULTS_DIR"
 
-########################################
-# 5. Genome quality assessment
-########################################
-echo "[5/8] Genome quality assessment..."
-bash "$PIPELINE_BASE/05_genome_quality_assessment.sh" "$RESULTS"
+# ===============================
+# [5/8] QC after assembly
+# ===============================
+echo "[5/8] QC after assembly..."
+bash "$SCRIPTS_DIR/05_qc_after_assembly.sh" \
+  "$RESULTS_DIR"
 
-echo "[5a] Coverage depth analysis..."
-bash "$PIPELINE_BASE/05a_coverage_analysis.sh" "$RESULTS"
+# ===============================
+# [6/8] Genome annotation
+# ===============================
+echo "[6/8] Genome annotation..."
+bash "$SCRIPTS_DIR/06_genome_annotation.sh" \
+  "$RESULTS_DIR"
 
-########################################
-# 6. Genome annotation
-########################################
-echo "[6/8] Genome annotation (Prokka + Bakta)..."
-bash "$PIPELINE_BASE/06_genome_annotation.sh" "$RESULTS"
+# ===============================
+# [7/8] AMR / mobile elements
+# ===============================
+echo "[7/8] AMR & mobile element analysis..."
+bash "$SCRIPTS_DIR/07_amr_mobile_elements.sh" \
+  "$RESULTS_DIR"
 
-########################################
-# 7. Plasmid reconstruction
-########################################
-echo "[7/8] Plasmid reconstruction (Plassembler)..."
-bash "$PIPELINE_BASE/07_plassembler.sh" "$RESULTS"
+# ===============================
+# [8/8] Plots & summary
+# ===============================
+echo "[8/8] Generating plots & summaries..."
+bash "$SCRIPTS_DIR/08_plots_and_summary.sh" \
+  "$RESULTS_DIR"
 
-########################################
-# 8. AMR + viral analysis
-########################################
-echo "[8/8] AMR detection (Abricate) + Viral detection (geNomad)..."
-bash "$PIPELINE_BASE/08_abricate.sh" "$RESULTS"
-bash "$PIPELINE_BASE/09_genomad.sh" "$RESULTS"
-
-########################################
-# DONE
-########################################
 echo "=========================================="
-echo " Hybrid Genome Assembly Pipeline COMPLETE"
+echo " Pipeline COMPLETED successfully"
+echo " Results: $RESULTS_DIR"
 echo "=========================================="
-
-echo "Outputs stored in:"
-echo " - Results:  $RESULTS"
-echo " - Figures:  $FIGURES"
-echo "✅ Pipeline completed successfully."

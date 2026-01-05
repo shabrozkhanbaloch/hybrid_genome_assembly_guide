@@ -9,6 +9,7 @@ if [ -z "$PROJECT_DIR" ]; then
 fi
 
 BASE="$PROJECT_DIR/results"
+mkdir -p "$PROJECT_DIR/figures"
 
 # ===============================
 # QC before processing

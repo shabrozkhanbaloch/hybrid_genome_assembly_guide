@@ -1,15 +1,16 @@
 #!/bin/bash
 set -euo pipefail
+shopt -s nullglob
 
 eval "$(conda shell.bash hook)"
 
 # ===============================
 # INPUT ARGUMENTS
 # ===============================
-RAW=$1
-RESULTS=$2
+RAW=${1:-}
+RESULTS=${2:-}
 
-if [ -z "$RAW" ] || [ -z "$RESULTS" ]; then
+if [[ -z "$RAW" || -z "$RESULTS" ]]; then
   echo "Usage: 03_process_reads.sh <RAW_DIR> <RESULTS_DIR>"
   exit 1
 fi
@@ -25,29 +26,52 @@ QC_LONG="$RESULTS/qc_after/long_reads"
 
 mkdir -p "$PROC_SHORT" "$PROC_LONG" "$QC_SHORT" "$QC_LONG"
 
+THREADS=14
+
+############################
+# Detect sample name
+############################
+cd "$RAW_SHORT"
+R1_FILES=(*_1.fastq.gz)
+
+if [[ ${#R1_FILES[@]} -ne 1 ]]; then
+  echo "❌ ERROR: Expected exactly ONE short-read sample"
+  exit 1
+fi
+
+SAMPLE_NAME="${R1_FILES[0]%%_1.fastq.gz}"
+
 ############################
 # Short reads processing (fastp)
 ############################
 conda activate 01_short_read_qc
 
 fastp \
-  -i "$RAW_SHORT"/*_1.fastq.gz \
-  -I "$RAW_SHORT"/*_2.fastq.gz \
-  -o "$PROC_SHORT"/processed_1.fastq.gz \
-  -O "$PROC_SHORT"/processed_2.fastq.gz \
+  -i "$RAW_SHORT/${SAMPLE_NAME}_1.fastq.gz" \
+  -I "$RAW_SHORT/${SAMPLE_NAME}_2.fastq.gz" \
+  -o "$PROC_SHORT/${SAMPLE_NAME}_1.fastq.gz" \
+  -O "$PROC_SHORT/${SAMPLE_NAME}_2.fastq.gz" \
   -q 25 \
-  -w 14 \
-  -h "$QC_SHORT"/fastp_report.html \
-  -j "$QC_SHORT"/fastp_report.json
+  -w "$THREADS" \
+  -h "$QC_SHORT/fastp_report.html" \
+  -j "$QC_SHORT/fastp_report.json"
 
 ############################
 # Long reads processing (NanoFilt)
 ############################
+cd "$RAW_LONG"
+LONG_FILES=(*.fastq.gz)
+
+if [[ ${#LONG_FILES[@]} -ne 1 ]]; then
+  echo "❌ ERROR: Expected exactly ONE long-read FASTQ file"
+  exit 1
+fi
+
 conda activate 03b_long_read_nanofilt
 
-zcat "$RAW_LONG"/*.fastq.gz | \
+zcat "${LONG_FILES[0]}" | \
   NanoFilt -q 8 --length 1000 --headcrop 50 | \
-  gzip > "$PROC_LONG"/processed_long.fastq.gz
+  gzip > "$PROC_LONG/${SAMPLE_NAME}_long.fastq.gz"
 
 ############################
 # QC after processing (NanoPlot)
@@ -55,11 +79,11 @@ zcat "$RAW_LONG"/*.fastq.gz | \
 conda activate 03a_long_read_nanoplot
 
 NanoPlot \
-  --fastq "$PROC_LONG"/processed_long.fastq.gz \
+  --fastq "$PROC_LONG/${SAMPLE_NAME}_long.fastq.gz" \
   --outdir "$QC_LONG" \
-  --threads 14
+  --threads "$THREADS"
 
-echo "Read processing (short + long) complete."
+echo "✅ Read processing (short + long) complete."
 echo "Processed reads saved in:"
 echo "  Short reads: $PROC_SHORT"
 echo "  Long reads:  $PROC_LONG"
