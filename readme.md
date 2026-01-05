@@ -373,6 +373,119 @@ To remove heavy intermediate files while keeping final outputs:
 🎯 Done.
 
 From raw FASTQ files to publication-ready assemblies in a single command.
+# 📊 Automated Plots & Figures
+
+This pipeline automatically generates publication-ready figures directly from analysis results.
+All plots are fully reproducible, script-generated, and require no manual intervention.
+
+Figures are created after genome assembly and quality assessment steps and are designed for direct inclusion in manuscripts.
+
+## 📈 Implemented Figures
+
+The pipeline currently generates the following types of plots:
+
+Assembly Quality Comparison
+
+Completeness vs contamination (CheckM2)
+
+Comparison across:
+
+Short-read assembly
+
+Long-read assembly
+
+Hybrid assembly
+
+Read Coverage Analysis
+
+Short reads mapped to short-only assembly
+
+Short reads mapped to hybrid assembly
+
+Long reads mapped to hybrid assembly
+
+Quality Summary Visualizations
+
+Aggregated QC metrics
+
+Assembly-level comparisons suitable for figures and supplements
+
+## 📁 Figure Output Location
+
+All figures are saved in the project-specific figures/ directory:
+```
+PROJECTS/paper_02/
+└── figures/
+    ├── Figure1_CheckM2_Completeness_Contamination.png
+    ├── Figure2_Coverage_Distribution.png
+    ├── Figure3_Assembly_Statistics.png
+    └── ...
+```
+🔁 Reproducibility of Figures
+
+Figures are generated only from pipeline output files
+
+No manual plotting or post-processing is required
+
+Figures can be safely deleted and regenerated at any time
+# ⚙️ Generating & Cleaning Figures (One-Go)
+
+This pipeline provides fully automated figure generation.
+All plots can be generated or regenerated using single commands, without any manual steps.
+
+## ▶️ Generate All Figures (One Command)
+
+To generate all plots at once from existing pipeline results:
+
+`bash run_plots_and_summary.sh /path/to/PROJECT_DIR`
+
+
+This script:
+
+reads finalized analysis outputs (assemblies, QC metrics, coverage results)
+
+generates all publication-ready plots
+
+saves them in the project figures/ directory
+
+📁 Output:
+```
+PROJECTS/paper_02/
+└── figures/
+    ├── Figure1_CheckM2_Completeness_Contamination.png
+    ├── Figure2_Coverage_Distribution.png
+    ├── Figure3_Assembly_Statistics.png
+    └── ...
+```
+## 🧹 Clean All Figures (Safe)
+
+To remove all generated plots while keeping analysis results intact:
+
+`bash cleanup_plots.sh /path/to/PROJECT_DIR`
+
+
+This:
+
+deletes only files inside figures/
+
+does not touch raw data or results
+
+is safe to run multiple times
+
+## 🔁 Clean & Regenerate Figures (Recommended)
+
+To fully regenerate plots from scratch:
+
+`bash cleanup_plots.sh /path/to/PROJECT_DIR`
+`bash run_plots_and_summary.sh /path/to/PROJECT_DIR`
+
+🔐 Safety Guarantees
+
+❌ Raw sequencing data is never modified
+
+❌ Analysis results are never deleted
+
+✅ Only figure files are removed/regenerated
 
 ## Acknowledgements
 
