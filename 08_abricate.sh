@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+shopt -s nullglob
 
 eval "$(conda shell.bash hook)"
 conda activate 07_abricate
@@ -7,25 +8,33 @@ conda activate 07_abricate
 # ===============================
 # INPUT ARGUMENT
 # ===============================
-PROJECT_DIR=$1
+RESULTS=${1:-}
 
-if [ -z "$PROJECT_DIR" ]; then
-  echo "Usage: 08_abricate.sh <PROJECT_DIR>"
+if [[ -z "$RESULTS" ]]; then
+  echo "Usage: 08_abricate.sh <RESULTS_DIR>"
   exit 1
 fi
 
-ASM="$PROJECT_DIR/results/assembly/03_hybrid/assembly.fasta"
-PLASM="$PROJECT_DIR/results/plasmids/plassembler_plasmids.fasta"
-OUT="$PROJECT_DIR/results/amr"
+ASM="$RESULTS/assembly/03_hybrid/assembly.fasta"
+PLASM_DIR="$RESULTS/plasmids"
+OUT="$RESULTS/amr"
 
 # -------------------------------
 # Sanity checks
 # -------------------------------
-[[ -f "$ASM" ]]   || { echo "ERROR: Assembly FASTA not found: $ASM"; exit 1; }
-[[ -f "$PLASM" ]] || { echo "ERROR: Plasmid FASTA not found: $PLASM"; exit 1; }
+[[ -f "$ASM" ]] || { echo "❌ Assembly FASTA not found: $ASM"; exit 1; }
 
-# clean old results
-rm -rf "$OUT"
+PLASM_FILES=("$PLASM_DIR"/*.fasta)
+
+if [[ ${#PLASM_FILES[@]} -lt 1 ]]; then
+  echo "❌ No plasmid FASTA found in $PLASM_DIR"
+  exit 1
+fi
+
+# safe clean
+mkdir -p "$OUT"
+rm -f "$OUT"/*.tsv
+
 mkdir -p "$OUT/assembly_level" "$OUT/plasmid_level"
 
 DBS=(ncbi resfinder card vfdb)
@@ -41,13 +50,16 @@ abricate --summary \
   "$OUT/assembly_level/abricate_assembly_summary.tsv"
 
 # -------- plasmid level --------
-for db in "${DBS[@]}"; do
-  abricate --db "$db" "$PLASM" > \
-    "$OUT/plasmid_level/abricate_${db}_plasmid.tsv"
+for fasta in "${PLASM_FILES[@]}"; do
+  base=$(basename "$fasta" .fasta)
+  for db in "${DBS[@]}"; do
+    abricate --db "$db" "$fasta" > \
+      "$OUT/plasmid_level/abricate_${db}_${base}.tsv"
+  done
 done
 
 abricate --summary \
-  "$OUT"/plasmid_level/abricate_*_plasmid.tsv > \
+  "$OUT"/plasmid_level/abricate_*.tsv > \
   "$OUT/plasmid_level/abricate_plasmid_summary.tsv"
 
 echo "✅ Abricate completed successfully"

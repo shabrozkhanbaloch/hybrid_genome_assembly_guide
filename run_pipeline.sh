@@ -17,7 +17,6 @@ fi
 # DIRECTORY STRUCTURE
 # ===============================
 DATA_DIR="$PROJECT_DIR/data"
-RAW_READS="$DATA_DIR/raw_reads"
 RESULTS_DIR="$PROJECT_DIR/results"
 SCRIPTS_DIR="$(dirname "$0")"
 
@@ -29,7 +28,7 @@ echo " Project: $PROJECT_DIR"
 echo "=========================================="
 
 # ===============================
-# [1/8] Setup raw reads
+# [1/8] Validate raw reads (READ-ONLY)
 # ===============================
 echo "[1/8] Setting up raw reads..."
 bash "$SCRIPTS_DIR/01_setup_raw_reads.sh" "$DATA_DIR"
@@ -39,7 +38,7 @@ bash "$SCRIPTS_DIR/01_setup_raw_reads.sh" "$DATA_DIR"
 # ===============================
 echo "[2/8] QC before processing..."
 bash "$SCRIPTS_DIR/02_qc_reads_before_processing.sh" \
-  "$RAW_READS" \
+  "$DATA_DIR" \
   "$RESULTS_DIR"
 
 # ===============================
@@ -47,7 +46,7 @@ bash "$SCRIPTS_DIR/02_qc_reads_before_processing.sh" \
 # ===============================
 echo "[3/8] Processing reads..."
 bash "$SCRIPTS_DIR/03_process_reads.sh" \
-  "$RAW_READS" \
+  "$DATA_DIR" \
   "$RESULTS_DIR"
 
 # ===============================

@@ -1,12 +1,20 @@
 #!/bin/bash
 set -euo pipefail
 
-PROJECT_DIR=$1
+PROJECT_DIR=${1:-}
 
-if [ -z "$PROJECT_DIR" ]; then
+if [[ -z "$PROJECT_DIR" ]]; then
   echo "Usage: 00_make_directories.sh <PROJECT_DIR>"
   exit 1
 fi
+
+# -------------------------------
+# SAFETY GUARD
+# -------------------------------
+[[ "$PROJECT_DIR" == */PROJECTS/* ]] || {
+  echo "❌ SAFETY CHECK FAILED: PROJECT_DIR must be under PROJECTS/"
+  exit 1
+}
 
 BASE="$PROJECT_DIR/results"
 mkdir -p "$PROJECT_DIR/figures"
@@ -44,9 +52,9 @@ mkdir -p \
 # Genome quality assessment
 # ===============================
 mkdir -p \
-  "$BASE/quality/checkm2"/{short_only,long_only,hybrid} \
+  "$BASE/quality/checkm2"/{01_short_only,02_long_only,03_hybrid} \
   "$BASE/quality/quast"/{01_short_only,02_long_only,03_hybrid} \
-  "$BASE/quality/busco"/{short_only,long_only,hybrid} \
+  "$BASE/quality/busco"/{01_short_only,02_long_only,03_hybrid} \
   "$BASE/quality/coverage"
 
 # ===============================
