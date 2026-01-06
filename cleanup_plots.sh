@@ -4,22 +4,24 @@ set -euo pipefail
 # ===============================
 # INPUT ARGUMENT
 # ===============================
-RESULTS=${1:-}
+PROJECT_DIR=${1:-}
 
-if [[ -z "$RESULTS" ]]; then
-  echo "Usage: cleanup_plots.sh <RESULTS_DIR>"
+if [[ -z "$PROJECT_DIR" ]]; then
+  echo "Usage: cleanup_plots.sh <PROJECT_DIR>"
   exit 1
 fi
 
-FIGURES_DIR="$RESULTS/figures"
+FIGURES_DIR="$PROJECT_DIR/figures"
 
 echo "=========================================="
 echo " Cleaning PROJECT plots"
 echo " Target: $FIGURES_DIR"
 echo "=========================================="
 
-# Safety check
-[[ "$FIGURES_DIR" == */results/figures ]] || {
+# -------------------------------
+# HARD SAFETY CHECK
+# -------------------------------
+[[ "$FIGURES_DIR" == */PROJECTS/*/figures ]] || {
   echo "❌ Safety check failed: refusing to clean $FIGURES_DIR"
   exit 1
 }
