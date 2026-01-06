@@ -14,10 +14,8 @@ import sys
 parser = argparse.ArgumentParser(
     description="Integrated assembly quality comparison (CheckM2 + QUAST)"
 )
-
 parser.add_argument("--results", help="RESULTS directory")
 parser.add_argument("--figures", help="FIGURES directory")
-
 args = parser.parse_args()
 
 RESULTS_DIR = args.results or os.environ.get("RESULTS_DIR")
@@ -31,6 +29,15 @@ OUTDIR  = Path(FIGURES_DIR)
 OUTDIR.mkdir(parents=True, exist_ok=True)
 
 # ======================================================
+# Helper: safe column lookup
+# ======================================================
+def get_col(df, candidates, label):
+    for c in candidates:
+        if c in df.columns:
+            return float(df.loc[0, c])
+    sys.exit(f"❌ Missing expected {label} column. Found: {list(df.columns)}")
+
+# ======================================================
 # Input paths
 # ======================================================
 CHECKM = {
@@ -39,14 +46,14 @@ CHECKM = {
     "Hybrid":     RESULTS / "quality/checkm2/hybrid/quality_report.tsv",
 }
 
-QUAST = {
-    "Short-read": RESULTS / "quality/quast/01_short_only/transposed_report.tsv",
-    "Long-read":  RESULTS / "quality/quast/02_long_only/transposed_report.tsv",
-    "Hybrid":     RESULTS / "quality/quast/03_hybrid/transposed_report.tsv",
+QUAST_BASE = {
+    "Short-read": RESULTS / "quality/quast/01_short_only",
+    "Long-read":  RESULTS / "quality/quast/02_long_only",
+    "Hybrid":     RESULTS / "quality/quast/03_hybrid",
 }
 
 # ======================================================
-# Load CheckM2 metrics
+# Load CheckM2 metrics (ROBUST)
 # ======================================================
 completeness = []
 contamination = []
@@ -56,25 +63,64 @@ for asm, path in CHECKM.items():
         sys.exit(f"❌ Missing CheckM2 file: {path}")
 
     df = pd.read_csv(path, sep="\t")
-    completeness.append(float(df.loc[0, "Completeness_General"]))
-    contamination.append(float(df.loc[0, "Contamination"]))
+
+    completeness.append(
+        get_col(df, ["Completeness_General", "Completeness"], "completeness")
+    )
+    contamination.append(
+        get_col(df, ["Contamination", "Contamination_General"], "contamination")
+    )
 
 # ======================================================
-# Load QUAST N50 (kb)
+# Load QUAST N50 (kb) – ROBUST
 # ======================================================
 n50 = []
 
-for asm, path in QUAST.items():
-    if not path.exists():
-        sys.exit(f"❌ Missing QUAST file: {path}")
+for asm, base in QUAST_BASE.items():
+    transposed = base / "transposed_report.tsv"
+    normal = base / "report.tsv"
 
-    df = pd.read_csv(path, sep="\t", index_col=0)
+    # ------------------------------
+    # Case 1: transposed_report.tsv
+    # ------------------------------
+    if transposed.exists():
+        df = pd.read_csv(transposed, sep="\t")
 
-    n50_col = [c for c in df.columns if c.lower() == "n50"]
-    if not n50_col:
-        sys.exit(f"❌ N50 column not found in {path}")
+        # QUAST transposed format → N50 is a COLUMN
+        n50_cols = [c for c in df.columns if c.lower() == "n50"]
+        if not n50_cols:
+            sys.exit(
+                f"❌ N50 column not found in {transposed}. "
+                f"Columns found: {list(df.columns)}"
+            )
 
-    n50.append(float(df[n50_col[0]].iloc[0]) / 1000)  # kb
+        n50_val = df[n50_cols[0]].iloc[0]
+
+    # ------------------------------
+    # Case 2: normal report.tsv
+    # ------------------------------
+    elif normal.exists():
+        df = pd.read_csv(normal, sep="\t")
+
+        # Standard QUAST format
+        if not {"Metric", "Value"}.issubset(df.columns):
+            sys.exit(f"❌ Unexpected QUAST format: {normal}")
+
+        row = df[df["Metric"].str.lower() == "n50"]
+        if row.empty:
+            sys.exit(f"❌ N50 not found in {normal}")
+
+        n50_val = row["Value"].values[0]
+
+    # ------------------------------
+    # Case 3: nothing found
+    # ------------------------------
+    else:
+        sys.exit(f"❌ No QUAST report found in {base}")
+
+    # store as kb
+    n50.append(float(n50_val) / 1000)
+
 
 # ======================================================
 # Plot setup

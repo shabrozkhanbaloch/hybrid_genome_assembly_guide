@@ -13,10 +13,8 @@ import sys
 parser = argparse.ArgumentParser(
     description="geNomad viral & plasmid contig classification summary"
 )
-
 parser.add_argument("--results", help="RESULTS directory")
 parser.add_argument("--figures", help="FIGURES directory")
-
 args = parser.parse_args()
 
 RESULTS_DIR = args.results or os.environ.get("RESULTS_DIR")
@@ -32,34 +30,62 @@ OUTDIR.mkdir(parents=True, exist_ok=True)
 GENOMAD = RESULTS / "prophage"
 
 # ======================================================
-# geNomad summary files (CONFIRMED STRUCTURE)
+# Assembly-level summaries (STABLE)
 # ======================================================
-ASM_VIRUS = GENOMAD / "assembly_level/assembly_summary/assembly_virus_summary.tsv"
-ASM_PLASMID = GENOMAD / "assembly_level/assembly_summary/assembly_plasmid_summary.tsv"
+ASM_SUMMARY = GENOMAD / "assembly_level" / "assembly_summary"
 
-PLS_VIRUS = GENOMAD / "plasmid_level/plassembler_plasmids_summary/plassembler_plasmids_virus_summary.tsv"
-PLS_PLASMID = GENOMAD / "plasmid_level/plassembler_plasmids_summary/plassembler_plasmids_plasmid_summary.tsv"
+ASM_VIRUS = ASM_SUMMARY / "assembly_virus_summary.tsv"
+ASM_PLASMID = ASM_SUMMARY / "assembly_plasmid_summary.tsv"
 
-files = [ASM_VIRUS, ASM_PLASMID, PLS_VIRUS, PLS_PLASMID]
-for f in files:
+for f in (ASM_VIRUS, ASM_PLASMID):
     if not f.exists():
         sys.exit(f"❌ Missing geNomad file: {f}")
 
 # ======================================================
-# Count contigs
+# Plasmid-level summaries (ROBUST DISCOVERY)
+# ======================================================
+PLASMID_SUMMARY_DIRS = list(
+    (GENOMAD / "plasmid_level").glob(
+        "*/plassembler_plasmids_summary"
+    )
+)
+
+if not PLASMID_SUMMARY_DIRS:
+    sys.exit("❌ No plassembler_plasmids_summary folders found")
+
+# ======================================================
+# Helper
 # ======================================================
 def count_contigs(path):
     df = pd.read_csv(path, sep="\t")
     return df.shape[0]
 
+# ======================================================
+# Assembly counts
+# ======================================================
 assembly_counts = {
     "Virus": count_contigs(ASM_VIRUS),
     "Plasmid": count_contigs(ASM_PLASMID),
 }
 
+# ======================================================
+# Plasmid counts (SUM across all plasmid FASTAs)
+# ======================================================
+plasmid_virus = 0
+plasmid_plasmid = 0
+
+for d in PLASMID_SUMMARY_DIRS:
+    v = d / "plassembler_plasmids_virus_summary.tsv"
+    p = d / "plassembler_plasmids_plasmid_summary.tsv"
+
+    if v.exists():
+        plasmid_virus += count_contigs(v)
+    if p.exists():
+        plasmid_plasmid += count_contigs(p)
+
 plasmid_counts = {
-    "Virus": count_contigs(PLS_VIRUS),
-    "Plasmid": count_contigs(PLS_PLASMID),
+    "Virus": plasmid_virus,
+    "Plasmid": plasmid_plasmid,
 }
 
 # ======================================================
@@ -68,8 +94,8 @@ plasmid_counts = {
 plt.style.use("seaborn-v0_8-whitegrid")
 
 colors = {
-    "Virus": "#0072B2",      # blue
-    "Plasmid": "#D55E00",    # vermillion
+    "Virus": "#0072B2",
+    "Plasmid": "#D55E00",
 }
 
 fig, axes = plt.subplots(1, 2, figsize=(9, 4), sharey=True)
@@ -89,7 +115,7 @@ for b in bars:
     ax.text(
         b.get_x() + b.get_width() / 2,
         b.get_height() + 0.5,
-        str(int(b.get_height())),
+        int(b.get_height()),
         ha="center",
         fontsize=10
     )
@@ -108,12 +134,12 @@ for b in bars:
     ax.text(
         b.get_x() + b.get_width() / 2,
         b.get_height() + 0.5,
-        str(int(b.get_height())),
+        int(b.get_height()),
         ha="center",
         fontsize=10
     )
 
-# ---- Global legend ----
+# ---- Legend ----
 handles = [plt.Line2D([0], [0], color=colors[k], lw=8) for k in colors]
 fig.legend(
     handles,

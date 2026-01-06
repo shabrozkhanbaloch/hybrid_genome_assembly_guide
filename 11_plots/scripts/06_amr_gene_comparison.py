@@ -78,9 +78,12 @@ db_counts = {}
 gene_counter = Counter()
 
 for f in DB_FILES:
-    db = f.stem.split("_")[1]   # SAFE: validated above
+    db = f.stem.split("_")[1]   # validated DB name
 
-    df = pd.read_csv(f, sep="\t", comment="#")
+    try:
+        df = pd.read_csv(f, sep="\t", comment="#")
+    except pd.errors.EmptyDataError:
+        continue   # empty Abricate output = valid biological result
 
     if df.empty:
         continue
@@ -93,6 +96,7 @@ for f in DB_FILES:
         for key in KEY_GENES:
             if key in g:
                 gene_counter[key] += 1
+
 
 # ======================================================
 # Plot
@@ -125,24 +129,37 @@ ax = axes[1]
 genes = list(gene_counter.keys())
 counts = list(gene_counter.values())
 
-bars = ax.bar(
-    genes,
-    counts,
-    color="#0072B2",
-    edgecolor="black"
-)
 ax.set_title("B. Clinically relevant AMR gene families")
 ax.set_ylabel("Number of plasmid contigs")
-ax.set_xticklabels(genes, rotation=45, ha="right")
 
-for b in bars:
-    ax.text(
-        b.get_x() + b.get_width() / 2,
-        b.get_height() + 0.5,
-        str(int(b.get_height())),
-        ha="center",
-        fontsize=9
+if genes:
+    bars = ax.bar(
+        genes,
+        counts,
+        color="#0072B2",
+        edgecolor="black"
     )
+    ax.set_xticklabels(genes, rotation=45, ha="right")
+
+    for b in bars:
+        ax.text(
+            b.get_x() + b.get_width() / 2,
+            b.get_height() + 0.5,
+            str(int(b.get_height())),
+            ha="center",
+            fontsize=9
+        )
+else:
+    ax.text(
+        0.5, 0.5,
+        "No clinically relevant AMR genes detected",
+        ha="center",
+        va="center",
+        fontsize=11,
+        transform=ax.transAxes
+    )
+    ax.set_xticks([])
+
 
 # ======================================================
 # Final formatting
