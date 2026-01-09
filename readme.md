@@ -316,12 +316,19 @@ Files must be compressed (.fastq.gz)
 `mkdir -p /data/wgs_assembly/PROJECTS/paper_02
 bash 00_make_directories.sh /data/wgs_assembly/PROJECTS/paper_02`
 
-## Step 4 – Link Sequencing Data (Using Symlinks)
-`ln -s /data/sequencing_data/project_02/short_reads_clean \
-      /data/wgs_assembly/PROJECTS/paper_02/data/short_reads`
+### This command:
 
-`ln -s /data/sequencing_data/project_02/long_reads \
-      /data/wgs_assembly/PROJECTS/paper_02/data/long_reads`
+- Creates the full project structure
+
+- Creates data/, results/, and figures/
+
+- Prepares all pipeline-required subdirectories
+
+## Step 4 – Sequencing Data (Automatic Linking)
+
+🚫 Manual symlinks are NOT required
+
+The script: `00_make_directories.sh` automatically links:
 
 
 ## 🔒 Why symlinks?
